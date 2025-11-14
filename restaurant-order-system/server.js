@@ -69,7 +69,9 @@ const path = require('path');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
+
+app.set('trust proxy', 1);
 
 // Middleware để xử lý dữ liệu JSON và cookie
 app.use(express.json());
@@ -97,11 +99,16 @@ app.post('/login', (req, res) => {
   const validPassword = '19791980';
 
   if (username === validUsername && password === validPassword) {
-    // Lưu cookie khi đăng nhập thành công
-    res.cookie('loggedIn', true, { maxAge: 3600000, httpOnly: true });
+    // SỬA ĐỔI CẤU HÌNH COOKIE:
+    res.cookie('loggedIn', true, { 
+        maxAge: 3600000, 
+        httpOnly: true, 
+        secure: true,   // THÊM: Bắt buộc cho môi trường HTTPS (Railway)
+        sameSite: 'Lax' // THÊM: Cấu hình cross-site (Lax thường đủ, hoặc dùng 'None' nếu cần)
+    });
     // Trả về 200 OK. Client sẽ nhận thấy thành công và tự chuyển hướng.
     return res.status(200).send({ message: 'Đăng nhập thành công!' }); 
-  } else {
+} else {
     res.status(400).send({ message: 'Tên đăng nhập hoặc mật khẩu không đúng!' });
   }
 });
@@ -152,8 +159,8 @@ app.use(cors());
 
 
 // Cấu hình server chạy trên port 3000
-app.listen(port, () => {
-  console.log(`Server đang chạy tại http://localhost:${port}`);
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
 
 

@@ -122,12 +122,13 @@
     errorMessage.textContent = ''; 
 
     fetch('https://nhahanglongchuyen-production.up.railway.app/login', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-      body: JSON.stringify({ username: 'nhahanglongchuyen', password: '19791980'  }),
-    })
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    // GỬI BIẾN LẤY TỪ FORM
+    body: JSON.stringify({ username: username, password: password }), 
+})
     .then(response => {
       if (response.ok) {
         // Đăng nhập thành công, server đã đặt cookie.
