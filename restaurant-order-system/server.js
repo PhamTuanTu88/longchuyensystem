@@ -153,18 +153,3 @@ app.listen(port, () => {
 });
 
 
-fetch('/login', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ username: 'user', password: '12345' })
-})
-.then(response => {
-  if (response.ok) {
-    window.location.href = '/order';  // Chuyển hướng sau khi đăng nhập thành công
-  } else {
-    alert('Tên đăng nhập hoặc mật khẩu không đúng');
-  }
-});
-

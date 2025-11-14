@@ -108,9 +108,6 @@
     <input type="password" id="password" name="password" placeholder="Mật Khẩu" required>
   </div>
   <button type="submit" class="btn">Đăng Nhập</button>
-  <div class="register-link">
-    <p>Chưa có tài khoản? <a href="#">Đăng Ký</a></p>
-  </div>
   <div id="error-message" class="error-message"></div>
 </form>
 
@@ -124,12 +121,12 @@
     const errorMessage = document.getElementById('error-message');
     errorMessage.textContent = ''; 
 
-    fetch('/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
+    fetch('https://nhahanglongchuyen-production.up.railway.app/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+      body: JSON.stringify({ username: 'nhahanglongchuyen', password: '19791980'  }),
     })
     .then(response => {
       if (response.ok) {
