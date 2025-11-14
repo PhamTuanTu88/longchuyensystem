@@ -69,9 +69,7 @@ const path = require('path');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.set('trust proxy', 1);
+const PORT = 3000;
 
 // Middleware để xử lý dữ liệu JSON và cookie
 app.use(express.json());
