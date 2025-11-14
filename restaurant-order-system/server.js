@@ -168,10 +168,3 @@ fetch('/login', {
   }
 });
 
-
-res.cookie('loggedIn', true, {
-  maxAge: 3600000,
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',  // Chỉ set secure cookie khi ở môi trường sản xuất
-  sameSite: 'strict'  // Đảm bảo cookie chỉ được gửi từ cùng một miền
-});
