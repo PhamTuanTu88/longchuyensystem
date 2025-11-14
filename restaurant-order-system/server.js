@@ -147,6 +147,10 @@ app.post('/save-invoice', (req, res) => {
   });
 });
 
+const cors = require('cors');
+app.use(cors());
+
+
 // Cấu hình server chạy trên port 3000
 app.listen(port, () => {
   console.log(`Server đang chạy tại http://localhost:${port}`);

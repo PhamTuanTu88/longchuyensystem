@@ -1,12 +1,12 @@
-
 {
   "name": "longchuyen_pos",
   "version": "1.0.0",
   "dependencies": {
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "express": "^5.1.0"
   },
   "scripts": {
-  "start": "node restaurant-order-system/server.js"
-}
+    "start": "node restaurant-order-system/server.js"
+  }
 }
