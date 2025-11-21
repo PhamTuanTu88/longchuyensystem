@@ -1,21 +1,29 @@
 // ...existing code...
 const MENU = {
   bia: [
-    { name: "Bia Tiger", price: 18000 },
-    { name: "Bia Heineken", price: 22000 },
-    { name: "Bia Sài Gòn", price: 15000 },
-    { name: "Đậu phộng rang", price: 10000 },
+    { name: "Bia Cốc", price: 10000 },
+    { name: "Bia Âu", price: 40000 },
+    { name: "Bia Tháp", price: 65000 },
+    { name: "Rượu Chai", price: 20000 },
+    { name: "Rượu Âu", price: 40000 },
+    { name: "Lạc Rang", price: 10000 },
+    { name: "Nem Chua", price: 25000 },
+    { name: "Nem Bùi", price: 35000 },
+    { name: "Bánh Đa", price: 35000 },
   ],
   lau: [
-    { name: "Lẩu thái", price: 250000 },
-    { name: "Lẩu riêu cua", price: 230000 },
-    { name: "Lẩu hải sản", price: 300000 },
+    { name: "Lẩu Riêu Cua Thập Cẩm", price: 600000 },
+    { name: "Lẩu Gà", price: 600000 },
+    { name: "Lẩu Gà Bò", price: 600000 },
+    { name: "Lẩu Hải Sản", price: 600000 },
+    { name: "Lẩu Cá", price: 800000 },
+    { name: "Lẩu Ngựa", price: 600000 },
+    { name: "Lẩu Ếch", price: 600000 },
+    { name: "Lẩu Vịt Măng Cay", price: 600000 },
+    { name: "Lẩu Dê", price: 600000 },
   ],
   co: [
-    { name: "Gà hấp", price: 200000 },
-    { name: "Bò xào", price: 150000 },
-    { name: "Rau xào", price: 50000 },
-    { name: "Đậu hũ chiên", price: 40000 },
+    { name: "Cỗ Món Theo Yêu Cầu", price: 600000 },
   ]
 };
 
@@ -24,6 +32,34 @@ for (let i = 1; i <= 30; i++) tableOrders[i] = [];
 
 let currentTable = null;
 let currentCategory = 'bia';
+let pendingCustomItem = null; // hold item when asking for custom price
+const ORDERS_KEY = 'tableOrders_v1';
+
+function saveOrders() {
+  try {
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(tableOrders));
+  } catch (e) {
+    console.error('Không thể lưu order vào localStorage', e);
+  }
+}
+
+function loadOrders() {
+  try {
+    const raw = localStorage.getItem(ORDERS_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    // ensure structure and copy
+    for (let i = 1; i <= 30; i++) {
+      if (data[i] && Array.isArray(data[i])) {
+        tableOrders[i] = data[i];
+      } else {
+        tableOrders[i] = tableOrders[i] || [];
+      }
+    }
+  } catch (e) {
+    console.error('Không thể đọc orders từ localStorage', e);
+  }
+}
 
 // render bàn
 const grid = document.getElementById('grid');
@@ -37,6 +73,17 @@ for (let i = 1; i <= 30; i++) {
   `;
   div.onclick = () => selectTable(i);
   grid.appendChild(div);
+}
+
+// load persisted orders and update statuses
+loadOrders();
+for (let i = 1; i <= 30; i++) {
+  const st = document.getElementById(`status-${i}`);
+  if (tableOrders[i] && tableOrders[i].length > 0) {
+    if (st) st.textContent = 'Đang order';
+  } else {
+    if (st) st.textContent = 'Trống';
+  }
 }
 
 function selectTable(id) {
@@ -60,26 +107,98 @@ function setCategory(cat) {
 function renderMenu() {
   const wrap = document.getElementById('menu-list');
   wrap.innerHTML = '';
-  MENU[currentCategory].forEach(item => {
+  const query = (document.getElementById('menu-search') && document.getElementById('menu-search').value || '').trim().toLowerCase();
+  MENU[currentCategory].filter(it => it.name.toLowerCase().includes(query)).forEach(item => {
     const div = document.createElement('div');
     div.className = 'menu-item';
-    div.innerHTML = `<h4>${item.name}</h4><p>${item.price.toLocaleString()} đ</p>`;
-    div.onclick = () => addToOrder(item);
+    // create inner content with a small price/edit button
+    const title = document.createElement('h4');
+    title.textContent = item.name;
+    title.style.cursor = 'pointer';
+    title.onclick = () => addToOrder(item);
+
+    const priceWrap = document.createElement('div');
+    priceWrap.style.display = 'flex';
+    priceWrap.style.justifyContent = 'center';
+    priceWrap.style.alignItems = 'center';
+    priceWrap.style.gap = '8px';
+
+    const priceText = document.createElement('span');
+    priceText.textContent = item.price.toLocaleString() + ' đ';
+    priceText.style.color = 'var(--primary)';
+    priceText.style.fontWeight = '600';
+
+    const priceBtn = document.createElement('button');
+    priceBtn.className = 'price-btn';
+    priceBtn.title = 'Nhập giá tùy chỉnh';
+    priceBtn.innerHTML = '💰';
+    priceBtn.onclick = (e) => { e.stopPropagation(); openPriceModal(item); };
+
+    priceWrap.appendChild(priceText);
+    priceWrap.appendChild(priceBtn);
+
+    div.appendChild(title);
+    div.appendChild(priceWrap);
     wrap.appendChild(div);
   });
 }
 
-function addToOrder(item) {
-  if (!currentTable) { alert('Chọn bàn trước'); return; }
+function addToOrder(item, customPrice) {
+  if (!currentTable) { showNotification('Chọn bàn trước', 'error'); return; }
   const list = tableOrders[currentTable];
-  const idx = list.findIndex(x => x.name === item.name);
+  const priceToUse = typeof customPrice === 'number' ? customPrice : item.price;
+  const idx = list.findIndex(x => x.name === item.name && x.price === priceToUse);
   if (idx >= 0) {
     list[idx].qty += 1;
   } else {
-    list.push({ name: item.name, price: item.price, qty: 1 });
+    list.push({ name: item.name, price: priceToUse, qty: 1 });
   }
   document.getElementById(`status-${currentTable}`).textContent = 'Đang order';
   renderOrder();
+  saveOrders();
+}
+
+// Open the price modal for custom-price categories
+function openPriceModal(item) {
+  if (!currentTable) { showNotification('Chọn bàn trước', 'error'); return; }
+  pendingCustomItem = item;
+  const modal = document.getElementById('price-modal');
+  const title = document.getElementById('price-modal-title');
+  const sub = document.getElementById('price-modal-sub');
+  const input = document.getElementById('price-input');
+  const qty = document.getElementById('price-qty');
+  title.textContent = `Nhập giá cho: ${item.name}`;
+  sub.textContent = `Mặc định: ${item.price.toLocaleString()} đ — thay đổi nếu khách yêu cầu`;
+  input.value = item.price || '';
+  qty.value = '1';
+  modal.classList.add('show');
+}
+
+function closePriceModal() {
+  const modal = document.getElementById('price-modal');
+  modal.classList.remove('show');
+  pendingCustomItem = null;
+}
+
+function confirmPrice() {
+  const input = document.getElementById('price-input');
+  const qty = document.getElementById('price-qty');
+  const v = Number(input.value);
+  // ensure integer quantity
+  let q = Number(qty.value);
+  if (!Number.isFinite(q)) q = 1;
+  q = Math.floor(Math.max(1, q));
+  if (!pendingCustomItem) return closePriceModal();
+  if (!v || v <= 0) {
+    showNotification('Vui lòng nhập giá hợp lệ (số lớn hơn 0).', 'error');
+    return;
+  }
+  // add item q times with custom price
+  const priceRounded = Math.round(v);
+  for (let i = 0; i < q; i++) {
+    addToOrder(pendingCustomItem, priceRounded);
+  }
+  closePriceModal();
 }
 
 // đổi: mỗi lần bấm sẽ trừ 1, còn 0 thì xóa
@@ -98,6 +217,7 @@ function deleteItemFromOrder(index) {
   }
 
   renderOrder();
+  saveOrders();
 }
 
 function renderOrder() {
@@ -169,10 +289,39 @@ btnConfirm.addEventListener('click', ()=>{
   if (st) st.textContent = 'Trống';
   closeInvoiceModal();
   renderOrder();
+  saveOrders();
 });
 
 let lastBill = null;
 const currency = n => Number(n||0).toLocaleString('vi-VN');
+
+// Hàm hiển thị thông báo
+function showNotification(message, type = 'success') {
+  const modal = document.getElementById('notification-modal');
+  const messageEl = document.getElementById('notification-message');
+  const iconEl = document.getElementById('notification-icon');
+  const contentEl = modal.querySelector('.notification-content');
+  
+  messageEl.textContent = message;
+  
+  // Xóa các class cũ
+  contentEl.classList.remove('success', 'error');
+  contentEl.classList.add(type);
+  
+  // Đặt icon
+  if (type === 'success') {
+    iconEl.textContent = '✓';
+  } else if (type === 'error') {
+    iconEl.textContent = '✕';
+  }
+  
+  modal.classList.add('show');
+}
+
+function closeNotification() {
+  const modal = document.getElementById('notification-modal');
+  modal.classList.remove('show');
+}
 
 function saveBill(bill) {
   const rec = {
@@ -193,13 +342,13 @@ function loadBills() {
 
 function payment() {
   if (!currentTable) {
-    alert("Chọn bàn trước");
+    showNotification('Chọn bàn trước', 'error');
     return;
   }
 
   const orderList = tableOrders[currentTable];
   if (orderList.length === 0) {
-    alert("Không có món nào trong đơn hàng.");
+    showNotification('Không có món nào trong đơn hàng.', 'error');
     return;
   }
 
@@ -210,13 +359,13 @@ function payment() {
 
   let billContent = `
     <h2>Hóa đơn - Bàn ${currentTable}</h2>
-    <table border="1">
+    <table style="width:100%;border-collapse:collapse">
       <thead>
         <tr>
-          <th>Món</th>
-          <th>SL</th>
-          <th>Giá</th>
-          <th>Thành tiền</th>
+          <th style="text-align:left;padding:6px">Món</th>
+          <th style="text-align:right;padding:6px">SL</th>
+          <th style="text-align:right;padding:6px">Giá</th>
+          <th style="text-align:right;padding:6px">Thành tiền</th>
         </tr>
       </thead>
       <tbody>
@@ -226,10 +375,10 @@ function payment() {
     const line = item.qty * item.price;
     billContent += `
       <tr>
-        <td>${item.name}</td>
-        <td>${item.qty}</td>
-        <td>${item.price.toLocaleString()}</td>
-        <td>${line.toLocaleString()}</td>
+        <td style="padding:6px">${item.name}</td>
+        <td style="padding:6px;text-align:right">${item.qty}</td>
+        <td style="padding:6px;text-align:right">${item.price.toLocaleString()}</td>
+        <td style="padding:6px;text-align:right">${line.toLocaleString()}</td>
       </tr>
     `;
   });
@@ -237,38 +386,47 @@ function payment() {
   billContent += `
     </tbody>
     </table>
-    <h3>Tổng cộng: ${total.toLocaleString()} đ</h3>
+    <h3 style="text-align:right;margin-top:12px">Tổng cộng: ${total.toLocaleString()} đ</h3>
   `;
 
-  const modal = document.createElement('div');
-  modal.id = 'payment-modal';
-  modal.style.position = 'fixed';
-  modal.style.top = '50%';
-  modal.style.left = '50%';
-  modal.style.transform = 'translate(-50%, -50%)';
-  modal.style.backgroundColor = 'white';
-  modal.style.padding = '20px';
-  modal.style.boxShadow = '0px 0px 15px rgba(0,0,0,0.2)';
-  modal.style.zIndex = '1000';
+  // Build modal using existing modal styles so body can scroll and footer stays visible
+  const wrapper = document.createElement('div');
+  wrapper.id = 'payment-modal';
+  wrapper.className = 'modal show';
+  wrapper.innerHTML = `
+    <div class="modal__backdrop"></div>
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <div>
+          <div style="font-weight:700">Nhà Hàng Long Chuyên</div>
+          <div class="subtitle">Hóa đơn bàn ${currentTable}</div>
+        </div>
+        <button class="modal__close" aria-label="Đóng">×</button>
+      </div>
 
-  modal.innerHTML = `
-    <div class="modal-header">
-      <h2>Hóa đơn - Bàn ${currentTable}</h2>
-    </div>
-    <div class="modal-body">
-      ${billContent}
-    </div>
-    <div class="modal-footer">
-      <button id="btn-print" onclick="printBill()">In hóa đơn</button>
-      <button id="btn-paid" onclick="markAsPaid()">Đã thanh toán</button>
+      <div class="modal__body">
+        ${billContent}
+      </div>
+
+      <div class="modal__footer">
+        <button id="payment-print" class="btn-primary" onclick="printBill()">In hóa đơn</button>
+        <button id="payment-paid" class="btn-primary outline" onclick="markAsPaid()">Đã thanh toán</button>
+      </div>
     </div>
   `;
 
-  document.body.appendChild(modal);
+  document.body.appendChild(wrapper);
+
+  // close handlers
+  const backdrop = wrapper.querySelector('.modal__backdrop');
+  const closeBtn = wrapper.querySelector('.modal__close');
+  backdrop.addEventListener('click', () => wrapper.remove());
+  closeBtn.addEventListener('click', () => wrapper.remove());
 }
 
 function printBill() {
-  const billContent = document.querySelector('.modal-body').innerHTML;
+  const modalBody = document.querySelector('#payment-modal .modal__body') || document.querySelector('.modal__body');
+  const billContent = modalBody ? modalBody.innerHTML : '';
   const currentDate = new Date();
   const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
   const billWithDate = `
@@ -304,18 +462,167 @@ function markAsPaid() {
   })
   .then(response => response.json())
   .then(data => {
-    alert(data.message);
+    showNotification(data.message || 'Lưu hóa đơn thành công!', 'success');
+    
+    // Xóa order của bàn
     tableOrders[currentTable] = [];
     document.getElementById(`status-${currentTable}`).textContent = 'Trống';
+    
+    // Reset lại currentTable và UI
+    currentTable = null;
+    document.querySelectorAll('.table-card').forEach(el => el.classList.remove('active'));
+    document.getElementById('order-title').textContent = 'Chưa chọn bàn';
+    document.getElementById('order-note').textContent = 'Bấm bàn bên trái để bắt đầu order';
+    
     renderOrder();
+    
+    // Đóng modal thanh toán
     const modal = document.getElementById('payment-modal');
     if (modal) {
       modal.remove();
     }
+    
+    saveOrders();
   })
   .catch(error => {
     console.error('Error:', error);
-    alert('Có lỗi xảy ra khi lưu hóa đơn.');
+    showNotification('Có lỗi xảy ra khi lưu hóa đơn.', 'error');
   });
 }
 // ...existing code...
+// Reports: client helpers
+let _lastReport = null;
+
+function formatNumber(n){ return Number(n||0).toLocaleString(); }
+
+function getReport() {
+  const type = document.getElementById('report-type').value;
+  const date = document.getElementById('report-date').value;
+  const q = `type=${encodeURIComponent(type)}&date=${encodeURIComponent(date)}`;
+  fetch(`/reports?${q}`)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('report-total').textContent = formatNumber(data.total);
+      document.getElementById('report-count').textContent = data.count || 0;
+      _lastReport = data;
+      showNotification('Báo cáo đã tải', 'success');
+    })
+    .catch(err => {
+      console.error(err);
+      showNotification('Không lấy được báo cáo', 'error');
+    });
+}
+
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportReportCSV() {
+  if (!_lastReport) {
+    showNotification('Chưa có báo cáo để xuất', 'error');
+    return;
+  }
+  const from = _lastReport.from || '';
+  const to = _lastReport.to || '';
+  const rows = [ ['from','to','total','count'], [from, to, _lastReport.total, _lastReport.count] ];
+  const when = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  downloadCSV(`report-${when}.csv`, rows);
+}
+
+// wire up report controls
+// Summary storage (collected by pressing 'Tổng kết')
+const SUMMARIES_KEY = 'collectedSummaries_v1';
+
+function loadSummaries(){
+  try { return JSON.parse(localStorage.getItem(SUMMARIES_KEY) || '[]'); } catch(e){ return []; }
+}
+function saveSummaries(arr){
+  try { localStorage.setItem(SUMMARIES_KEY, JSON.stringify(arr)); } catch(e){ console.error('Cannot save summaries', e); }
+}
+
+function addToSummary(){
+  if (!currentTable) { showNotification('Chọn bàn trước để tổng kết', 'error'); return; }
+  const orderList = tableOrders[currentTable] || [];
+  if (orderList.length === 0) { showNotification('Không có món để tổng kết', 'error'); return; }
+
+  const total = orderList.reduce((s, it) => s + it.qty * it.price, 0);
+  const rec = { id: 'S' + Date.now(), table: currentTable, total, time: new Date().toISOString() };
+  const arr = loadSummaries();
+  arr.push(rec);
+  saveSummaries(arr);
+  renderCollectedSummaries();
+  showNotification('Đã thêm vào kho tổng kết', 'success');
+}
+
+function renderCollectedSummaries(){
+  const wrap = document.getElementById('collected-summaries');
+  if (!wrap) return;
+  const arr = loadSummaries();
+  if (arr.length === 0) { wrap.innerHTML = '<div style="color:var(--text-secondary)">Chưa có mục tổng kết nào</div>'; return; }
+  wrap.innerHTML = '';
+  arr.slice().reverse().forEach(item => {
+    const el = document.createElement('div');
+    el.style = 'padding:6px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center';
+    el.innerHTML = `<div><strong>Bàn ${item.table}</strong><div style="font-size:12px;color:var(--text-secondary)">${new Date(item.time).toLocaleString()}</div></div><div style="text-align:right"><div>${Number(item.total).toLocaleString()} đ</div></div>`;
+    wrap.appendChild(el);
+  });
+}
+
+function clearSummaries(){
+  if (!confirm('Xóa tất cả mục tổng kết?')) return;
+  saveSummaries([]);
+  renderCollectedSummaries();
+}
+
+function exportSummariesCSV(){
+  const arr = loadSummaries();
+  if (!arr || arr.length === 0) { showNotification('Không có mục nào để xuất', 'error'); return; }
+  const rows = [['id','table','time','total']].concat(arr.map(a=>[a.id,a.table,a.time,a.total]));
+  const when = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  downloadCSV(`summaries-${when}.csv`, rows);
+}
+
+function toggleReports(){
+  const c = document.getElementById('reports-container');
+  if (!c) return;
+  const shown = c.style.display !== 'none';
+  c.style.display = shown ? 'none' : 'block';
+  if (!shown) renderCollectedSummaries();
+}
+
+// wire up report controls and summary buttons on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  const dateEl = document.getElementById('report-date');
+  if (dateEl) {
+    const today = new Date();
+    dateEl.value = today.toISOString().slice(0,10);
+  }
+  const btn = document.getElementById('btn-get-report');
+  if (btn) btn.addEventListener('click', getReport);
+  const bex = document.getElementById('btn-export-report');
+  if (bex) bex.addEventListener('click', exportReportCSV);
+
+  const toggleBtn = document.getElementById('btn-toggle-reports');
+  if (toggleBtn) toggleBtn.addEventListener('click', toggleReports);
+
+  const addSummaryBtn = document.getElementById('btn-add-summary');
+  if (addSummaryBtn) addSummaryBtn.addEventListener('click', addToSummary);
+
+  const clearBtn = document.getElementById('btn-clear-summaries');
+  if (clearBtn) clearBtn.addEventListener('click', clearSummaries);
+
+  const exportSummBtn = document.getElementById('btn-export-summaries');
+  if (exportSummBtn) exportSummBtn.addEventListener('click', exportSummariesCSV);
+
+  // initial render if reports visible
+  const reportsContainer = document.getElementById('reports-container');
+  if (reportsContainer && reportsContainer.style.display !== 'none') renderCollectedSummaries();
+});
