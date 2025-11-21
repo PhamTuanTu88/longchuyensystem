@@ -41,8 +41,8 @@ app.get('/login', (req, res) => {
 // POST /login -> set session
 app.post('/login', (req, res) => {
   const { username, password } = req.body || {};
-  const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-  const ADMIN_PASS = process.env.ADMIN_PASS || '1234';
+  const ADMIN_USER = process.env.ADMIN_USER || 'nhahanglongchuyen';
+  const ADMIN_PASS = process.env.ADMIN_PASS || '19791980';
   if (username === ADMIN_USER && password === ADMIN_PASS) {
     req.session.authenticated = true;
     return res.json({ ok: true, message: 'Đăng nhập thành công' });
