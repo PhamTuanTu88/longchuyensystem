@@ -3,14 +3,14 @@ const MENU = {
   bia: [
     { name: "Bia Cốc", price: 10000 },
     { name: "Bia Âu", price: 40000 },
+    { name: "Bia nửa Âu", price: 20000 },
     { name: "Bia Tháp", price: 65000 },
     { name: "Rượu Chai", price: 20000 },
-    { name: "Rượu Âu", price: 40000 },
+    { name: "Rượu Âu", price: 80000 },
     { name: "Lạc Rang", price: 10000 },
     { name: "Nem Chua", price: 25000 },
     { name: "Nem Bùi", price: 35000 },
     { name: "Bánh Đa", price: 35000 },
-    
 
 { name: "Thịt chua", price: 0 },
 { name: "Đậu lướt", price: 0 },
@@ -239,6 +239,9 @@ function addToOrder(item, customPrice) {
   document.getElementById(`status-${currentTable}`).textContent = 'Đang order';
   renderOrder();
   saveOrders();
+  // thông báo cho người dùng rằng đã thêm món thành công
+  try { showNotification(`Đã thêm "${item.name}" vào bàn ${currentTable}`, 'success'); } catch(e){ console.warn('notify failed', e); }
+
   try { if (socket && currentTable) socket.emit('order-update', { table: currentTable, order: tableOrders[currentTable] }); } catch(e){}
 }
 
