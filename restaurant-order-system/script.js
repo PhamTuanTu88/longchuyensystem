@@ -239,6 +239,7 @@ function addToOrder(item, customPrice) {
   document.getElementById(`status-${currentTable}`).textContent = 'Đang order';
   renderOrder();
   saveOrders();
+  try { if (socket && currentTable) socket.emit('order-update', { table: currentTable, order: tableOrders[currentTable] }); } catch(e){}
 }
 
 // Open the price modal for custom-price categories
@@ -301,6 +302,7 @@ function deleteItemFromOrder(index) {
 
   renderOrder();
   saveOrders();
+  try { if (socket && currentTable) socket.emit('order-update', { table: currentTable, order: tableOrders[currentTable] }); } catch(e){}
 }
 
 function renderOrder() {
@@ -377,6 +379,45 @@ btnConfirm.addEventListener('click', ()=>{
 
 let lastBill = null;
 const currency = n => Number(n||0).toLocaleString('vi-VN');
+
+// --- Socket.IO real-time sync ---
+let socket = null;
+try {
+  socket = io();
+  socket.on('connect', () => console.log('connected to socket', socket.id));
+
+  socket.on('order-update', (payload) => {
+    try {
+      if (!payload || typeof payload.table === 'undefined') return;
+      const t = payload.table;
+      tableOrders[t] = payload.order || [];
+      const st = document.getElementById(`status-${t}`);
+      if (st) st.textContent = (tableOrders[t] && tableOrders[t].length > 0) ? 'Đang order' : 'Trống';
+      if (Number(currentTable) === Number(t)) renderOrder();
+      saveOrders();
+    } catch (e) { console.error('order-update handling error', e); }
+  });
+
+  socket.on('order-cleared', (payload) => {
+    try {
+      if (!payload || typeof payload.table === 'undefined') return;
+      const t = payload.table;
+      tableOrders[t] = [];
+      const st = document.getElementById(`status-${t}`);
+      if (st) st.textContent = 'Trống';
+      if (Number(currentTable) === Number(t)) renderOrder();
+      saveOrders();
+    } catch (e) { console.error('order-cleared error', e); }
+  });
+
+  socket.on('invoice-saved', (bill) => {
+    if (bill && bill.table) {
+      showNotification(`Hóa đơn bàn ${bill.table} đã được lưu (thiết bị khác)`, 'success');
+    }
+  });
+} catch (e) {
+  console.warn('Socket.IO client not available', e);
+}
 
 // Hàm hiển thị thông báo
 function showNotification(message, type = 'success') {
@@ -546,26 +587,30 @@ function markAsPaid() {
   .then(response => response.json())
   .then(data => {
     showNotification(data.message || 'Lưu hóa đơn thành công!', 'success');
-    
-    // Xóa order của bàn
-    tableOrders[currentTable] = [];
-    document.getElementById(`status-${currentTable}`).textContent = 'Trống';
-    
+
+    // Xóa order của bàn (ghi lại id trước khi reset currentTable)
+    const clearedTable = currentTable;
+    tableOrders[clearedTable] = [];
+    const stEl = document.getElementById(`status-${clearedTable}`);
+    if (stEl) stEl.textContent = 'Trống';
+
     // Reset lại currentTable và UI
     currentTable = null;
     document.querySelectorAll('.table-card').forEach(el => el.classList.remove('active'));
     document.getElementById('order-title').textContent = 'Chưa chọn bàn';
     document.getElementById('order-note').textContent = 'Bấm bàn bên trái để bắt đầu order';
-    
+
     renderOrder();
-    
+
     // Đóng modal thanh toán
     const modal = document.getElementById('payment-modal');
     if (modal) {
       modal.remove();
     }
-    
+
     saveOrders();
+    // notify other clients that this table was cleared
+    try { if (socket) socket.emit('order-cleared', { table: clearedTable }); } catch(e){}
   })
   .catch(error => {
     console.error('Error:', error);

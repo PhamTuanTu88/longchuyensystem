@@ -2,11 +2,16 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const session = require('express-session');
+const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
+// create HTTP server and attach Socket.IO later
+const server = http.createServer(app);
+let io = null;
 
 // session (very small/simple setup). Set ADMIN_USER / ADMIN_PASS in env to change credentials.
 app.use(session({
@@ -58,6 +63,27 @@ app.get('/logout', (req, res) => {
 
 app.use(express.static(path.join(__dirname, '/')));
 
+// attach Socket.IO when module loaded
+try {
+  const { Server } = require('socket.io');
+  io = new Server(server, { cors: { origin: '*' } });
+
+  io.on('connection', (socket) => {
+    console.log('Socket connected:', socket.id);
+
+    socket.on('order-update', (payload) => {
+      // broadcast order updates to other connected clients
+      socket.broadcast.emit('order-update', payload);
+    });
+
+    socket.on('disconnect', () => {
+      // console.log('Socket disconnected:', socket.id);
+    });
+  });
+} catch (e) {
+  console.warn('Socket.IO not available:', e.message);
+}
+
 // Lưu hóa đơn
 app.post('/save-invoice', isAuthenticated, (req, res) => {
   const bill = req.body;
@@ -92,6 +118,14 @@ app.post('/save-invoice', isAuthenticated, (req, res) => {
       if (writeErr) {
         return res.status(500).json({ message: 'Lỗi khi lưu hóa đơn' });
       }
+      // emit events to connected sockets so other clients can update
+      try {
+        if (io) {
+          io.emit('invoice-saved', bill);
+          io.emit('order-cleared', { table: bill.table });
+        }
+      } catch (e) { console.error('Socket emit failed', e); }
+
       return res.status(200).json({ message: 'Hóa đơn đã được lưu' });
     });
   });
@@ -160,7 +194,7 @@ app.use((req, res) => {
   res.status(404).send('Not found');
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
 
