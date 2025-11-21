@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: longchuyen-pos
+    env: node
+    region: oregon
+    branch: main
+    repo: https://github.com/tuantuit2003-dev/longchuyenfull
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      - key: SESSION_SECRET
+        sync: false
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASS
+        sync: false
