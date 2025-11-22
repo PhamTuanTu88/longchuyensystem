@@ -297,3 +297,22 @@ app.post('/print', isAuthenticated, (req, res) => {
     return res.status(500).json({ message: 'Không thể tạo file in' });
   }
 });
+
+// Remote-print endpoint: emit a print request to connected browser clients (e.g., PC browser)
+app.post('/remote-print', isAuthenticated, (req, res) => {
+  const data = req.body;
+  if (!data || !data.table || !Array.isArray(data.items)) return res.status(400).json({ message: 'Dữ liệu in không hợp lệ' });
+
+  try {
+    if (io) {
+      // emit to all clients; client-side will decide whether to perform printing (desktop-only or registered printer)
+      io.emit('remote-print', data);
+      console.log('Remote print event emitted for table', data.table);
+      return res.json({ ok: true, message: 'Đã gửi lệnh in tới các thiết bị kết nối' });
+    }
+    return res.status(500).json({ message: 'Socket server không khả dụng' });
+  } catch (e) {
+    console.error('remote-print error', e);
+    return res.status(500).json({ message: 'Lỗi khi phát lệnh in' });
+  }
+});

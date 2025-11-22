@@ -418,8 +418,75 @@ try {
       showNotification(`Hóa đơn bàn ${bill.table} đã được lưu (thiết bị khác)`, 'success');
     }
   });
+
+  // remote-print: when a remote device (phone) requests printing, desktop browser can handle it
+  const isMobileClient = /Mobi|Android/i.test(navigator.userAgent || '');
+  socket.on('remote-print', (data) => {
+    try {
+      // only attempt to print from non-mobile clients by default
+      if (isMobileClient) return;
+      // data expected: { table, items: [...], total }
+      showNotification(`Nhận lệnh in từ thiết bị khác (bàn ${data.table})`, 'success');
+      // create printable content and open print dialog
+      printRemoteInvoice(data);
+    } catch (e) { console.error('remote-print handling error', e); }
+  });
 } catch (e) {
   console.warn('Socket.IO client not available', e);
+}
+
+function printRemoteInvoice(data) {
+  try {
+    const currentDate = new Date();
+    const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
+    let itemsHtml = '';
+    let total = 0;
+    (data.items || []).forEach(it => {
+      const line = (it.qty || 1) * (Number(it.price) || 0);
+      total += line;
+      itemsHtml += `<tr><td style="padding:6px">${it.name}</td><td style="padding:6px;text-align:right">${it.qty || 1}</td><td style="padding:6px;text-align:right">${(Number(it.price)||0).toLocaleString()}</td><td style="padding:6px;text-align:right">${line.toLocaleString()}</td></tr>`;
+    });
+
+    const html = `
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Hóa đơn - Bàn ${data.table}</title>
+          <style>
+            body{font-family:Arial,Helvetica,sans-serif;padding:12px}
+            table{width:100%;border-collapse:collapse}
+            th,td{border-bottom:1px solid #ddd}
+          </style>
+        </head>
+        <body>
+          <h2>Nhà Hàng Long Chuyên</h2>
+          <h3>Hóa đơn - Bàn ${data.table}</h3>
+          <div>Thời gian: ${formattedDate}</div>
+          <table>
+            <thead><tr><th>Món</th><th>SL</th><th>Giá</th><th>Thành tiền</th></tr></thead>
+            <tbody>${itemsHtml}</tbody>
+          </table>
+          <h3 style="text-align:right">Tổng: ${total.toLocaleString()} đ</h3>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank', 'width=600,height=600');
+    if (!printWindow) {
+      showNotification('Không thể mở cửa sổ in. Vui lòng cho phép popup.', 'error');
+      return;
+    }
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    // give browser a moment to render then trigger print
+    setTimeout(() => {
+      try { printWindow.focus(); printWindow.print(); } catch (e) { console.error('print failed', e); }
+    }, 500);
+  } catch (e) {
+    console.error('printRemoteInvoice error', e);
+    showNotification('Lỗi khi thực hiện in từ thiết bị khác', 'error');
+  }
 }
 
 // Hàm hiển thị thông báo
@@ -554,6 +621,23 @@ function payment() {
 function printBill() {
   const modalBody = document.querySelector('#payment-modal .modal__body') || document.querySelector('.modal__body');
   const billContent = modalBody ? modalBody.innerHTML : '';
+  const isMobileClient = /Mobi|Android/i.test(navigator.userAgent || '');
+  // If mobile, send a remote-print request to the server so a connected PC browser can print
+  if (isMobileClient) {
+    const orderList = tableOrders[currentTable] || [];
+    const total = orderList.reduce((t, it) => t + (it.qty * it.price), 0);
+    const paymentData = { table: currentTable, items: orderList, total };
+    fetch('/remote-print', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(paymentData)
+    })
+    .then(r => r.json())
+    .then(resp => {
+      if (resp && resp.ok) showNotification('Đã gửi lệnh in tới máy in (qua trình duyệt máy tính).', 'success');
+      else showNotification(resp.message || 'Không gửi được lệnh in.', 'error');
+    })
+    .catch(err => { console.error('remote-print error', err); showNotification('Lỗi khi gửi lệnh in', 'error'); });
+    return;
+  }
   const currentDate = new Date();
   const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
   const billWithDate = `
