@@ -334,6 +334,11 @@ app.post('/remote-print', allowPrintAuth, (req, res) => {
   if (!data || !data.table || !Array.isArray(data.items)) return res.status(400).json({ message: 'Dữ liệu in không hợp lệ' });
 
   try {
+    // debug log: who requested remote-print (if available)
+    try {
+      const from = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      console.log(`remote-print request from ${from} (hasSession=${!!(req.session && req.session.authenticated)}, hasToken=${!!(req.body && (req.body.printToken || req.headers['x-print-token']))}) for table=${data.table}`);
+    } catch (e) { /* ignore */ }
     if (io) {
       // If any printers are registered, emit only to those sockets. Otherwise broadcast to all.
       if (printers.size > 0) {
@@ -352,5 +357,19 @@ app.post('/remote-print', allowPrintAuth, (req, res) => {
   } catch (e) {
     console.error('remote-print error', e);
     return res.status(500).json({ message: 'Lỗi khi phát lệnh in' });
+  }
+});
+
+// Debug endpoint to inspect registered printers
+app.get('/printer-status', (req, res) => {
+  try {
+    const list = [];
+    for (const [sid, meta] of printers.entries()) {
+      list.push({ socketId: sid, meta });
+    }
+    return res.json({ count: list.length, printers: list });
+  } catch (e) {
+    console.error('printer-status error', e);
+    return res.status(500).json({ message: 'Không thể lấy trạng thái máy in' });
   }
 });
