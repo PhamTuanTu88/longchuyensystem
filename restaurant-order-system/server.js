@@ -30,6 +30,15 @@ function isAuthenticated(req, res, next){
   return res.status(401).json({ message: 'Unauthorized' });
 }
 
+// allow printing either by session auth or by a shared print token in the request body
+function allowPrintAuth(req, res, next){
+  if (req.session && req.session.authenticated) return next();
+  const token = req.body && (req.body.printToken || req.headers['x-print-token']);
+  if (token && process.env.PRINT_TOKEN && token === process.env.PRINT_TOKEN) return next();
+  // otherwise unauthorized
+  return res.status(401).json({ message: 'Unauthorized (print token missing or invalid)' });
+}
+
 // Root -> serve index.html trực tiếp (protected)
 app.get('/', isAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -319,7 +328,8 @@ app.post('/print', isAuthenticated, (req, res) => {
 });
 
 // Remote-print endpoint: emit a print request to connected browser clients (e.g., PC browser)
-app.post('/remote-print', isAuthenticated, (req, res) => {
+// remote-print accepts either a logged-in session OR a valid print token
+app.post('/remote-print', allowPrintAuth, (req, res) => {
   const data = req.body;
   if (!data || !data.table || !Array.isArray(data.items)) return res.status(400).json({ message: 'Dữ liệu in không hợp lệ' });
 

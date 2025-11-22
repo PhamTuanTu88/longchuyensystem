@@ -682,15 +682,32 @@ function printBill() {
     const orderList = tableOrders[currentTable] || [];
     const total = orderList.reduce((t, it) => t + (it.qty * it.price), 0);
     const paymentData = { table: currentTable, items: orderList, total };
-    fetch('/remote-print', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(paymentData)
-    })
-    .then(r => r.json())
-    .then(resp => {
-      if (resp && resp.ok) showNotification('Đã gửi lệnh in tới máy in (qua trình duyệt máy tính).', 'success');
-      else showNotification(resp.message || 'Không gửi được lệnh in.', 'error');
-    })
-    .catch(err => { console.error('remote-print error', err); showNotification('Lỗi khi gửi lệnh in', 'error'); });
+    // Try to use stored print token first; if not present ask user to enter one.
+    const storedToken = localStorage.getItem('printToken');
+    function doRemotePrint(token) {
+      const payload = Object.assign({}, paymentData);
+      if (token) payload.printToken = token;
+      fetch('/remote-print', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+        .then(r => r.json())
+        .then(resp => {
+          if (resp && resp.ok) showNotification('Đã gửi lệnh in tới máy in (qua trình duyệt máy tính).', 'success');
+          else showNotification(resp.message || 'Không gửi được lệnh in.', 'error');
+        })
+        .catch(err => { console.error('remote-print error', err); showNotification('Lỗi khi gửi lệnh in', 'error'); });
+    }
+
+    if (storedToken) {
+      doRemotePrint(storedToken);
+    } else {
+      const token = prompt('Nhập mã in (PRINT_TOKEN) nếu bạn đã cấu hình, hoặc nhấn Hủy để đăng nhập bình thường:');
+      if (token) {
+        localStorage.setItem('printToken', token);
+        doRemotePrint(token);
+      } else {
+        // no token entered -> try without token (may require login on server)
+        doRemotePrint(null);
+      }
+    }
     return;
   }
   const currentDate = new Date();
