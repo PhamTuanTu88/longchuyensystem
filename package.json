@@ -15,4 +15,8 @@
   "scripts": {
     "start": "node restaurant-order-system/server.js"
   }
+  ,
+  "engines": {
+    "node": "18.x"
+  }
 }
