@@ -227,3 +227,73 @@ app.post('/clear-invoices', (req, res) => {
     }
   });
 });
+
+// Print endpoint: accept invoice data and print on server's connected printer
+app.post('/print', isAuthenticated, (req, res) => {
+  const data = req.body;
+  if (!data || !data.table || !Array.isArray(data.items)) return res.status(400).json({ message: 'Dữ liệu in không hợp lệ' });
+
+  // generate a simple PDF invoice using pdfkit and send to printer
+  try {
+    const PDFDocument = require('pdfkit');
+    const { join } = require('path');
+    const fs = require('fs');
+    const tmpName = `invoice-print-${Date.now()}.pdf`;
+    const outPath = path.join(__dirname, tmpName);
+
+    const doc = new PDFDocument({ margin: 36 });
+    const stream = fs.createWriteStream(outPath);
+    doc.pipe(stream);
+
+    doc.fontSize(18).text('Nhà Hàng Long Chuyên', { align: 'center' });
+    doc.moveDown(0.5);
+    doc.fontSize(12).text(`Hóa đơn - Bàn ${data.table}`, { align: 'left' });
+    doc.text(`Thời gian: ${new Date().toLocaleString()}`);
+    doc.moveDown(0.5);
+
+    doc.fontSize(11);
+    doc.text('Món', { continued: true }); doc.text('SL', { align: 'right', continued: true }); doc.text('Giá', { align: 'right' });
+    doc.moveDown(0.25);
+
+    let total = 0;
+    data.items.forEach(it => {
+      const line = (it.qty || 1) * (Number(it.price) || 0);
+      total += line;
+      doc.text(`${it.name}`, { continued: true });
+      doc.text(`${it.qty || 1}`, { align: 'right', continued: true });
+      doc.text(`${(Number(it.price) || 0).toLocaleString()} đ`, { align: 'right' });
+    });
+
+    doc.moveDown(0.5);
+    doc.fontSize(13).text(`Tổng: ${total.toLocaleString()} đ`, { align: 'right' });
+
+    doc.end();
+
+    stream.on('finish', async () => {
+      try {
+        // send to printer using pdf-to-printer if available
+        let printer = null;
+        try { printer = require('pdf-to-printer'); } catch (e) { printer = null; }
+
+        if (printer && typeof printer.print === 'function') {
+          // optional: data.printerName to select specific printer
+          const opts = {};
+          if (data.printerName) opts.printer = data.printerName;
+          await printer.print(outPath, opts);
+          // remove temp file
+          fs.unlink(outPath, () => {});
+          return res.json({ ok: true, message: 'Lệnh in đã gửi tới máy in' });
+        }
+
+        // If pdf-to-printer not available, just return the PDF path for manual printing
+        return res.json({ ok: true, message: 'PDF tạo thành công', file: tmpName });
+      } catch (e) {
+        console.error('Print error', e);
+        return res.status(500).json({ message: 'Lỗi khi gửi lệnh in' });
+      }
+    });
+  } catch (err) {
+    console.error('Generate PDF failed', err);
+    return res.status(500).json({ message: 'Không thể tạo file in' });
+  }
+});

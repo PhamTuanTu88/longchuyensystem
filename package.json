@@ -8,6 +8,10 @@
     "express-session": "^1.18.2",
     "socket.io": "^4.8.1"
   },
+  "optionalDependencies": {
+    "pdf-to-printer": "^4.0.1",
+    "pdfkit": "^0.13.0"
+  },
   "scripts": {
     "start": "node restaurant-order-system/server.js"
   }
