@@ -12,6 +12,8 @@ app.use(express.json());
 // create HTTP server and attach Socket.IO later
 const server = http.createServer(app);
 let io = null;
+// in-memory registry of printer clients: socketId -> meta
+const printers = new Map();
 
 // session (very small/simple setup). Set ADMIN_USER / ADMIN_PASS in env to change credentials.
 app.use(session({
@@ -76,7 +78,25 @@ try {
       socket.broadcast.emit('order-update', payload);
     });
 
+    socket.on('register-printer', (meta) => {
+      try {
+        printers.set(socket.id, meta || {});
+        console.log('Printer registered:', socket.id, meta || {});
+        socket.emit('printer-registered', { ok: true, id: socket.id, meta: meta || {} });
+      } catch (e) { console.error('register-printer error', e); }
+    });
+
+    socket.on('unregister-printer', () => {
+      try {
+        printers.delete(socket.id);
+        console.log('Printer unregistered:', socket.id);
+        socket.emit('printer-unregistered', { ok: true });
+      } catch (e) { console.error('unregister-printer error', e); }
+    });
+
     socket.on('disconnect', () => {
+      // cleanup
+      printers.delete(socket.id);
       // console.log('Socket disconnected:', socket.id);
     });
   });
@@ -305,10 +325,18 @@ app.post('/remote-print', isAuthenticated, (req, res) => {
 
   try {
     if (io) {
-      // emit to all clients; client-side will decide whether to perform printing (desktop-only or registered printer)
+      // If any printers are registered, emit only to those sockets. Otherwise broadcast to all.
+      if (printers.size > 0) {
+        for (const sid of printers.keys()) {
+          try { io.to(sid).emit('remote-print', data); } catch (e) { console.error('emit to printer failed', sid, e); }
+        }
+        console.log('Remote print event emitted to registered printers for table', data.table);
+        return res.json({ ok: true, message: 'Đã gửi lệnh in tới máy in đã đăng ký' });
+      }
+      // fallback: broadcast to all connected clients
       io.emit('remote-print', data);
-      console.log('Remote print event emitted for table', data.table);
-      return res.json({ ok: true, message: 'Đã gửi lệnh in tới các thiết bị kết nối' });
+      console.log('Remote print event emitted (fallback broadcast) for table', data.table);
+      return res.json({ ok: true, message: 'Đã gửi lệnh in tới các thiết bị kết nối (không có máy in đăng ký)' });
     }
     return res.status(500).json({ message: 'Socket server không khả dụng' });
   } catch (e) {

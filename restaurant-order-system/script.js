@@ -489,6 +489,61 @@ function printRemoteInvoice(data) {
   }
 }
 
+// Printer registration UI + handlers
+let printerRegistered = false;
+function updatePrinterButton() {
+  let btn = document.getElementById('printer-toggle');
+  if (!btn) return;
+  btn.textContent = printerRegistered ? 'Hủy đăng ký máy in' : 'Đăng ký làm máy in';
+  btn.style.background = printerRegistered ? '#c0392b' : '#2ecc71';
+}
+
+function togglePrinterRegistration() {
+  if (!socket) { showNotification('Không kết nối socket', 'error'); return; }
+  if (printerRegistered) {
+    socket.emit('unregister-printer');
+  } else {
+    // optional meta: hostname or user info
+    const meta = { name: navigator.userAgent, when: new Date().toISOString() };
+    socket.emit('register-printer', meta);
+  }
+}
+
+// socket responses
+try {
+  if (socket) {
+    socket.on('printer-registered', (info) => {
+      printerRegistered = true; updatePrinterButton();
+      showNotification('Thiết bị đã đăng ký làm máy in', 'success');
+      console.log('printer-registered', info);
+    });
+    socket.on('printer-unregistered', () => {
+      printerRegistered = false; updatePrinterButton();
+      showNotification('Đã hủy đăng ký máy in', 'success');
+    });
+  }
+} catch (e) { console.warn('printer socket handlers not attached', e); }
+
+// inject a small floating button on desktop to register as printer
+document.addEventListener('DOMContentLoaded', () => {
+  const isMobileClient = /Mobi|Android/i.test(navigator.userAgent || '');
+  if (isMobileClient) return; // only show on non-mobile
+  const btn = document.createElement('button');
+  btn.id = 'printer-toggle';
+  btn.style.position = 'fixed';
+  btn.style.right = '12px';
+  btn.style.bottom = '12px';
+  btn.style.zIndex = 9999;
+  btn.style.padding = '10px 12px';
+  btn.style.borderRadius = '6px';
+  btn.style.border = 'none';
+  btn.style.color = '#fff';
+  btn.style.cursor = 'pointer';
+  btn.onclick = togglePrinterRegistration;
+  document.body.appendChild(btn);
+  updatePrinterButton();
+});
+
 // Hàm hiển thị thông báo
 function showNotification(message, type = 'success') {
   const modal = document.getElementById('notification-modal');
