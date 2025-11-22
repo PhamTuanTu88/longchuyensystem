@@ -116,6 +116,8 @@ try {
 // Lưu hóa đơn
 app.post('/save-invoice', isAuthenticated, (req, res) => {
   const bill = req.body;
+  console.log('POST /save-invoice called');
+  try { console.log('bill summary:', { table: bill && bill.table, items: bill && bill.items && bill.items.length, total: bill && bill.total }); } catch(e){}
   if (!bill || !bill.table || !bill.items || typeof bill.total === 'undefined') {
     return res.status(400).json({ message: 'Dữ liệu hóa đơn không hợp lệ' });
   }
@@ -145,7 +147,8 @@ app.post('/save-invoice', isAuthenticated, (req, res) => {
 
     fs.writeFile(invoiceFilePath, JSON.stringify(invoices, null, 2), 'utf8', (writeErr) => {
       if (writeErr) {
-        return res.status(500).json({ message: 'Lỗi khi lưu hóa đơn' });
+        console.error('Failed to write invoices.json:', writeErr);
+        return res.status(500).json({ message: 'Lỗi khi lưu hóa đơn', detail: writeErr.message });
       }
       // emit events to connected sockets so other clients can update
       try {
@@ -155,6 +158,7 @@ app.post('/save-invoice', isAuthenticated, (req, res) => {
         }
       } catch (e) { console.error('Socket emit failed', e); }
 
+      console.log('Invoice saved to', invoiceFilePath);
       return res.status(200).json({ message: 'Hóa đơn đã được lưu' });
     });
   });
