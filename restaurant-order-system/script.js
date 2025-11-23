@@ -460,6 +460,7 @@ function printRemoteInvoice(data) {
         </head>
         <body>
           <h2>Nhà Hàng Long Chuyên</h2>
+          <div style="font-size:12px;color:#333;margin-bottom:6px">Thôn Lau - Hoàng Lâu - Tam Dương - Vĩnh Phúc</div>
           <h3>Hóa đơn - Bàn ${data.table}</h3>
           <div>Thời gian: ${formattedDate}</div>
           <table>
@@ -467,6 +468,7 @@ function printRemoteInvoice(data) {
             <tbody>${itemsHtml}</tbody>
           </table>
           <h3 style="text-align:right">Tổng: ${total.toLocaleString()} đ</h3>
+          <div style="margin-top:10px;text-align:center;font-weight:600">Xin cảm ơn quý khách !</div>
         </body>
       </html>
     `;

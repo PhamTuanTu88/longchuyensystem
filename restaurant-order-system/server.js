@@ -279,7 +279,10 @@ app.post('/print', isAuthenticated, (req, res) => {
     doc.pipe(stream);
 
     doc.fontSize(18).text('Nhà Hàng Long Chuyên', { align: 'center' });
-    doc.moveDown(0.5);
+    // add restaurant address under name
+    doc.moveDown(0.2);
+    doc.fontSize(10).text('Thôn Lau - Hoàng Lâu - Tam Dương - Vĩnh Phúc', { align: 'center' });
+    doc.moveDown(0.6);
     doc.fontSize(12).text(`Hóa đơn - Bàn ${data.table}`, { align: 'left' });
     doc.text(`Thời gian: ${new Date().toLocaleString()}`);
     doc.moveDown(0.5);
@@ -299,6 +302,10 @@ app.post('/print', isAuthenticated, (req, res) => {
 
     doc.moveDown(0.5);
     doc.fontSize(13).text(`Tổng: ${total.toLocaleString()} đ`, { align: 'right' });
+
+    // thank you note
+    doc.moveDown(0.8);
+    doc.fontSize(11).text('Xin cảm ơn quý khách !', { align: 'center' });
 
     doc.end();
 
