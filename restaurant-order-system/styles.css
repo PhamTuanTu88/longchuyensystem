@@ -967,3 +967,80 @@ tbody tr:last-child td {
 }
 
 .price-btn:active { transform: translateY(0); }
+
+/* === BỐ TRÍ LẠI KHU ORDER: MENU BÊN TRÁI / DANH SÁCH ORDER BÊN PHẢI === */
+
+/* Biến .order-panel từ flex thành grid 2 cột:
+   - Cột 1: menu + thanh toán
+   - Cột 2: danh sách món đã order (sticky) */
+.order-panel {
+  display: grid;
+  grid-template-columns: 2fr 1fr;  /* trái rộng hơn, phải hẹp hơn */
+  grid-auto-rows: auto;
+  column-gap: 24px;
+  row-gap: 16px;
+}
+
+/* Header và tabs chiếm full chiều ngang (2 cột) */
+.order-header,
+.menu-tabs {
+  grid-column: 1 / -1;
+}
+
+/* Hàng search (chính là div ngay sau .menu-tabs trong HTML) nằm ở cột trái */
+.order-panel > div:nth-of-type(3) {
+  grid-column: 1 / 2;
+}
+
+/* Danh sách menu món (lưới món) cũng ở cột trái */
+#menu-list {
+  grid-column: 1 / 2;
+}
+
+/* Khối danh sách món đã order sang cột phải và sticky khi cuộn */
+#sticky-order-list {
+  grid-column: 2 / 3;
+  align-self: flex-start;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: var(--shadow-md);
+
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+
+  position: sticky;
+  top: 0; /* nếu muốn nó cách header 1 đoạn, có thể chỉnh thành 60px, 80px... */
+}
+
+/* Bảng trong khối sticky gọn hơn, không cần thêm shadow/margin */
+#sticky-order-list table {
+  box-shadow: none;
+  margin-bottom: 12px;
+}
+
+/* Dòng tổng + nút Thanh toán / Tổng kết nằm dưới menu, vẫn ở cột trái */
+.order-panel > .total-line {
+  grid-column: 1 / 2;
+}
+
+/* Khối reports (nếu đang dùng) trải ngang cả 2 cột bên dưới */
+#reports-container {
+  grid-column: 1 / -1;
+}
+
+/* === RESPONSIVE: TRÊN MOBILE QUAY VỀ 1 CỘT, BỎ STICKY === */
+@media (max-width: 900px) {
+  .order-panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #sticky-order-list {
+    position: static;
+    max-height: none;
+  }
+}
+
