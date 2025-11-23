@@ -99,32 +99,17 @@ header {
   font-weight: 500;
 }
 
-/* ==== ORDER PANEL: CHUYỂN SANG GRID 2 CỘT (MENU / ORDER) ==== */
 .order-panel {
   width: 70%;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   overflow-y: auto;
-
-  /* grid 2 cột: trái = menu, phải = danh sách order */
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: auto auto auto 1fr auto auto;
-  grid-template-areas:
-    "order-header order-header"
-    "menu-tabs menu-tabs"
-    "search sticky-order"
-    "menu sticky-order"
-    "total sticky-order"
-    "reports reports";
-  column-gap: 24px;
-  row-gap: 16px;
 }
 
-/* gán từng phần vào grid-area */
 .order-header {
-  grid-area: order-header;
-  margin-bottom: 0;              /* bỏ margin dưới cũ, vì đã dùng row-gap */
+  margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 2px solid var(--border);
 }
@@ -141,56 +126,14 @@ header {
 }
 
 .menu-tabs {
-  grid-area: menu-tabs;
   display: flex;
   gap: 10px;
-  margin-bottom: 0;
+  margin-bottom: 16px;
   padding: 4px;
   background: #f1f5f9;
   border-radius: 8px;
 }
 
-/* Hàng search (div ngay sau .menu-tabs trong HTML) */
-.order-panel > div:nth-of-type(3) {
-  grid-area: search;
-}
-
-/* menu-list (lưới món) ở cột trái */
-.menu-list {
-  grid-area: menu;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
-  margin-bottom: 20px;
-  flex-shrink: 0;
-}
-
-/* khối danh sách order bên phải + sticky */
-#sticky-order-list {
-  grid-area: sticky-order;
-  align-self: flex-start;
-  position: sticky;
-  top: 0; /* bám đỉnh khung order-panel khi cuộn */
-
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px;
-  box-shadow: var(--shadow-md);
-  max-height: calc(100vh - 80px);
-  overflow-y: auto;
-}
-
-/* dòng tổng + nút Thanh toán/Tổng kết */
-.order-panel > .total-line {
-  grid-area: total;
-}
-
-#reports-container {
-  grid-area: reports;
-}
-
-/* ====== MENU TABS BUTTON ====== */
 .menu-tabs button {
   flex: 1;
   border: none;
@@ -215,7 +158,14 @@ header {
   box-shadow: var(--shadow-sm);
 }
 
-/* ====== MÓN TRONG MENU ====== */
+.menu-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
 .menu-item {
   background: var(--card);
   border: 2px solid var(--border);
@@ -247,7 +197,6 @@ header {
   font-size: 13px;
 }
 
-/* ====== BẢNG CHUNG (MENU ORDER / DANH SÁCH ORDER) ====== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -258,12 +207,6 @@ table {
   margin-bottom: 16px;
   flex: 1;
   overflow-y: auto;
-}
-
-/* bảng trong khối sticky: bỏ bớt bóng/margin cho gọn */
-#sticky-order-list table {
-  box-shadow: none;
-  margin-bottom: 12px;
 }
 
 th {
@@ -308,7 +251,6 @@ tbody tr:last-child td {
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
-/* ====== TỔNG TIỀN ====== */
 .total-line {
   margin-top: 16px;
   padding: 16px;
@@ -319,13 +261,8 @@ tbody tr:last-child td {
   border: 1px solid var(--border);
   color: var(--text-primary);
   font-size: 15px;
-
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
 }
 
-/* MOBILE */
 @media (max-width: 900px) {
   .layout {
     flex-direction: column;
@@ -336,18 +273,6 @@ tbody tr:last-child td {
   }
   .menu-list {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-
-  /* trên mobile: quay về layout cột dọc, không sticky */
-  .order-panel {
-    display: flex;
-    flex-direction: column;
-  }
-
-  #sticky-order-list {
-    position: static;
-    max-height: none;
-    margin-top: 8px;
   }
 }
 
@@ -545,7 +470,6 @@ tbody tr:last-child td {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
   transform: translateY(-2px);
 }
-
 #payment-modal .modal-header h2 {
   text-align: center;
 }
@@ -878,6 +802,8 @@ tbody tr:last-child td {
   box-shadow: none;
 }
 
+.total-line { display: flex; justify-content: flex-end; align-items: center; }
+
 /* ===== NÚT TỔNG KẾT & TOGGLE REPORTS ===== */
 #btn-add-summary {
   background: linear-gradient(90deg, #f97316 0%, #fb923c 100%);
@@ -968,79 +894,4 @@ tbody tr:last-child td {
 
 .price-btn:active { transform: translateY(0); }
 
-/* === BỐ TRÍ LẠI KHU ORDER: MENU BÊN TRÁI / DANH SÁCH ORDER BÊN PHẢI === */
-
-/* Biến .order-panel từ flex thành grid 2 cột:
-   - Cột 1: menu + thanh toán
-   - Cột 2: danh sách món đã order (sticky) */
-.order-panel {
-  display: grid;
-  grid-template-columns: 2fr 1fr;  /* trái rộng hơn, phải hẹp hơn */
-  grid-auto-rows: auto;
-  column-gap: 24px;
-  row-gap: 16px;
-}
-
-/* Header và tabs chiếm full chiều ngang (2 cột) */
-.order-header,
-.menu-tabs {
-  grid-column: 1 / -1;
-}
-
-/* Hàng search (chính là div ngay sau .menu-tabs trong HTML) nằm ở cột trái */
-.order-panel > div:nth-of-type(3) {
-  grid-column: 1 / 2;
-}
-
-/* Danh sách menu món (lưới món) cũng ở cột trái */
-#menu-list {
-  grid-column: 1 / 2;
-}
-
-/* Khối danh sách món đã order sang cột phải và sticky khi cuộn */
-#sticky-order-list {
-  grid-column: 2 / 3;
-  align-self: flex-start;
-
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px;
-  box-shadow: var(--shadow-md);
-
-  max-height: calc(100vh - 80px);
-  overflow-y: auto;
-
-  position: sticky;
-  top: 0; /* nếu muốn nó cách header 1 đoạn, có thể chỉnh thành 60px, 80px... */
-}
-
-/* Bảng trong khối sticky gọn hơn, không cần thêm shadow/margin */
-#sticky-order-list table {
-  box-shadow: none;
-  margin-bottom: 12px;
-}
-
-/* Dòng tổng + nút Thanh toán / Tổng kết nằm dưới menu, vẫn ở cột trái */
-.order-panel > .total-line {
-  grid-column: 1 / 2;
-}
-
-/* Khối reports (nếu đang dùng) trải ngang cả 2 cột bên dưới */
-#reports-container {
-  grid-column: 1 / -1;
-}
-
-/* === RESPONSIVE: TRÊN MOBILE QUAY VỀ 1 CỘT, BỎ STICKY === */
-@media (max-width: 900px) {
-  .order-panel {
-    display: flex;
-    flex-direction: column;
-  }
-
-  #sticky-order-list {
-    position: static;
-    max-height: none;
-  }
-}
 
