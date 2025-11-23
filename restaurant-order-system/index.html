@@ -6,11 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
 
 <!-- MODAL THÔNG BÁO -->
-<div id="notification-modal" class="notification-modal" aria-hidden="true">
-  <div class="notification-content" role="dialog" aria-modal="true">
+<div id="notification-modal" class="notification-modal">
+  <div class="notification-content">
     <div class="notification-icon" id="notification-icon"></div>
     <div class="notification-message" id="notification-message"></div>
     <button class="notification-btn" onclick="closeNotification()">Đóng</button>
@@ -34,10 +33,10 @@
 </div>
 
 <!-- MODAL HÓA ĐƠN -->
-<div id="invoice-modal" class="modal" aria-hidden="true">
+<div id="invoice-modal" class="modal">
   <div class="modal__backdrop"></div>
 
-  <!-- vùng in (print-area) -->
+  <!-- phần này là vùng in (print-area) -->
   <div class="modal__dialog print-area">
     <div class="modal__header">
       <div>
@@ -73,33 +72,27 @@
   </div>
 </div>
 
+
+<body>
 <header>
-  <div class="header-inner">
+  <div style="display:flex;align-items:center;justify-content:space-between">
     <div>Nhà Hàng Long Chuyên — 30 bàn</div>
-    <div>
-      <a id="logout-link" href="/logout" class="logout-link">Đăng xuất</a>
-    </div>
+    <div><a id="logout-link" href="/logout" style="color:#fff;background:rgba(255,255,255,0.12);padding:6px 10px;border-radius:8px;text-decoration:none;font-weight:700">Đăng xuất</a></div>
   </div>
 </header>
-
-<div class="top-bar">
-  <button id="btn-toggle-reports">Tổng kết</button>
+<div style="position:relative;padding:8px 16px">
+  <button id="btn-toggle-reports" style="position:absolute;right:16px;top:8px">Tổng kết</button>
 </div>
-
 <div class="layout">
-  <!-- PANEL BÀN -->
   <div class="tables-panel">
     <h3>Chọn bàn</h3>
     <div id="grid" class="grid-tables"></div>
   </div>
 
-  <!-- PANEL ORDER -->
   <div class="order-panel">
     <div class="order-header">
-      <div>
-        <h3 id="order-title">Chưa chọn bàn</h3>
-        <small id="order-note">Bấm bàn bên trái để bắt đầu order</small>
-      </div>
+      <h3 id="order-title">Chưa chọn bàn</h3>
+      <small id="order-note">Bấm bàn bên trái để bắt đầu order</small>
     </div>
 
     <div class="menu-tabs">
@@ -108,95 +101,77 @@
       <button id="tab-co" onclick="setCategory('co')">Cỗ món theo yêu cầu</button>
     </div>
 
-    <!-- 2 CỘT: MENU (TRÁI) + ORDER (PHẢI) -->
-    <div class="order-content">
-      <!-- Cột trái: menu -->
-      <div class="menu-column">
-        <div class="menu-search-row">
-          <input id="menu-search" type="search" placeholder="Tìm món..." />
-          <button id="menu-clear-search" title="Xóa tìm kiếm">✖</button>
-        </div>
-
-        <div id="menu-list" class="menu-list"></div>
-      </div>
-
-      <!-- Cột phải: danh sách món đã order (STICKY) -->
-      <div class="order-summary-column">
-        <div id="sticky-order-list">
-          <h4>Danh sách món đã order</h4>
-          <table>
-            <thead>
-              <tr>
-                <th>Món</th>
-                <th>SL</th>
-                <th>Giá</th>
-                <th>Thành tiền</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="order-body"></tbody>
-          </table>
-          <div class="total-line">
-            Tổng: <span id="order-total">0</span> đ
-          </div>
-        </div>
-      </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <input id="menu-search" type="search" placeholder="Tìm món..." style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px" />
+      <button id="menu-clear-search" title="Xóa tìm kiếm" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card)">✖</button>
     </div>
 
-    <!-- NÚT THANH TOÁN / TỔNG KẾT -->
-    <div class="total-line actions-line">
-      <div class="actions-group">
-        <button id="btn-payment" onclick="payment()">Thanh toán</button>
-        <button id="btn-add-summary">Tổng kết</button>
-      </div>
+    <div id="menu-list" class="menu-list"></div>
+
+    <h4>Danh sách món đã order</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Món</th>
+          <th>SL</th>
+          <th>Giá</th>
+          <th>Thành tiền</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="order-body"></tbody>
+    </table>
+    <div class="total-line">
+      Tổng: <span id="order-total">0</span> đ
     </div>
-
-    <!-- Reports panel -->
-    <div id="reports-container" style="display:none;">
-      <div class="reports-panel">
-        <h3 style="margin-top:0">Báo cáo</h3>
-        <div class="report-row">
-          <label for="report-type">Loại</label>
-          <select id="report-type">
-            <option value="daily">Hàng ngày</option>
-            <option value="monthly">Hàng tháng</option>
-            <option value="yearly">Hàng năm</option>
-          </select>
-          <input id="report-date" type="date" />
-          <button id="btn-get-report">Lấy</button>
-        </div>
-
-        <div class="report-row summary">
-          <div>Tổng: <strong id="report-total">0</strong> đ</div>
-          <div>Số hoá đơn: <strong id="report-count">0</strong></div>
-          <button id="btn-export-report">Xuất CSV</button>
-        </div>
-
-        <hr />
-        <div class="report-header">
-          <strong>Kho tổng kết (những entry bạn bấm 'Tổng kết')</strong>
-          <div>
-            <button id="btn-clear-summaries">Xóa</button>
-            <button id="btn-export-summaries">Xuất CSV</button>
-          </div>
-        </div>
-        <div id="collected-summaries" class="summaries-box"></div>
-
-        <hr />
-        <div style="text-align:center">
-          <button id="btn-clear-all-data" class="btn-danger">
-            🗑️ Xóa tất cả dữ liệu test
-          </button>
-        </div>
-      </div>
-    </div>
-
   </div>
+  <div class="total-line">
+    <button id="btn-payment" onclick="payment()" style="margin-right: 12px;">Thanh toán</button>
+    <button id="btn-add-summary" style="margin-right: 20px;">Tổng kết</button>
+  </div>
+
+  <!-- Reports panel -->
+  <div id="reports-container" style="display:none;">
+    <div class="reports-panel" style="margin:16px;padding:12px;border:1px solid var(--border);border-radius:8px;max-width:420px">
+      <h3 style="margin-top:0">Báo cáo</h3>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <label for="report-type">Loại</label>
+        <select id="report-type">
+          <option value="daily">Hàng ngày</option>
+          <option value="monthly">Hàng tháng</option>
+          <option value="yearly">Hàng năm</option>
+        </select>
+        <input id="report-date" type="date" />
+        <button id="btn-get-report">Lấy</button>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+        <div>Tổng: <strong id="report-total">0</strong> đ</div>
+        <div>Số hoá đơn: <strong id="report-count">0</strong></div>
+        <button id="btn-export-report">Xuất CSV</button>
+      </div>
+
+      <hr />
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>Kho tổng kết (những entry bạn bấm 'Tổng kết')</strong>
+        <div>
+          <button id="btn-clear-summaries">Xóa</button>
+          <button id="btn-export-summaries">Xuất CSV</button>
+        </div>
+      </div>
+      <div id="collected-summaries" style="max-height:200px;overflow:auto;margin-top:8px"></div>
+
+      <hr />
+      <div style="text-align:center">
+        <button id="btn-clear-all-data" style="background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm)">🗑️ Xóa tất cả dữ liệu test</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
 <script src="menu-enhancements.js"></script>
-<script src="clear-data-helper.js"></script>
-</body>
+<script src="clear-data-helper.js"></script></body>
 </html>
