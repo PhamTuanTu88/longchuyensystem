@@ -93,6 +93,13 @@ const MENU = {
 { name: "Vịt chiên giềng", price: 0 },
 { name: "Vịt xào hành răm", price: 0 },
 { name: "Chả nướng", price: 100000 },
+{ name: "Thuốc lá Thăng Long", price: 15000 },
+{ name: "Thuốc lá Sài Gòn xanh", price: 15000 },
+{ name: "Thuốc lá Sài Gòn Bấm", price: 20000 },
+{ name: "Thuốc lá Sài Gòn Bạc", price: 20000 },
+
+
+
   ],
   lau: [
     { name: "Lẩu Riêu Cua Thập Cẩm", price: 600000 },
