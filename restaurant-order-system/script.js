@@ -64,34 +64,34 @@ const MENU = {
 { name: "Mèo hấp", price: 0 },
 { name: "Mèo tái nộm", price: 0 },
 { name: "Lòng mèo xào", price: 0 },
-{ name: "cá hồi", price: 0 },
+{ name: "Cá hồi", price: 0 },
 { name: "Dúi", price: 0 },
 { name: "Nhím", price: 0 },
-{ name: "ba ba", price: 0 },
-{ name: "cá nheo", price: 0 },
-{ name: "cá chình", price: 0 },
-{ name: "cá lăng", price: 0 },
+{ name: "Ba ba", price: 0 },
+{ name: "Cá nheo", price: 0 },
+{ name: "Cá chình", price: 0 },
+{ name: "Cá lăng", price: 0 },
 { name: "Gà mẹt", price: 0 },
 { name: "Gà suất", price: 0 },
 { name: "Gà rang muối", price: 0 },
-{ name: "gà luộc", price: 0 },
-{ name: "gà nướng", price: 0 },
-{ name: "gà chiên mắm", price: 0 },
-{ name: "bò chiên thái lan", price: 120000 },
-{ name: "bò tái chanh", price: 120000 },
-{ name: "bò cuốn cải", price: 120000 },
-{ name: "bò xào cần tỏi", price: 120000 },
-{ name: "bò xào măng trúc", price: 120000 },
-{ name: "bò bít tết", price: 120000 },
-{ name: "bò lúc lắc", price: 120000 },
-{ name: "ếch rang muối", price: 80000 },
-{ name: "ếch om chuối đậu", price: 150000 },
-{ name: "ếch xào xả ớt", price: 80000 },
-{ name: "vịt nướng", price: 0 },
-{ name: "vịt luộc", price: 0 },
-{ name: "vịt rang muối", price: 0 },
-{ name: "vịt chiên giềng", price: 0 },
-{ name: "vịt xào hành răm", price: 0 },
+{ name: "Gà luộc", price: 0 },
+{ name: "Gà nướng", price: 0 },
+{ name: "Gà chiên mắm", price: 0 },
+{ name: "Bò chiên thái lan", price: 120000 },
+{ name: "Bò tái chanh", price: 120000 },
+{ name: "Bò cuốn cải", price: 120000 },
+{ name: "Bò xào cần tỏi", price: 120000 },
+{ name: "Bò xào măng trúc", price: 120000 },
+{ name: "Bò bít tết", price: 120000 },
+{ name: "Bò lúc lắc", price: 120000 },
+{ name: "Ếch rang muối", price: 80000 },
+{ name: "Ếch om chuối đậu", price: 150000 },
+{ name: "Ếch xào xả ớt", price: 80000 },
+{ name: "Vịt nướng", price: 0 },
+{ name: "Vịt luộc", price: 0 },
+{ name: "Vịt rang muối", price: 0 },
+{ name: "Vịt chiên giềng", price: 0 },
+{ name: "Vịt xào hành răm", price: 0 },
 { name: "Chả nướng", price: 100000 },
   ],
   lau: [
@@ -453,29 +453,30 @@ function printRemoteInvoice(data) {
           <meta charset="utf-8">
           <title>Hóa đơn - Bàn ${data.table}</title>
           <style>
-              body{font-family:Arial,Helvetica,sans-serif;padding:8px;width:300px}
-              .receipt{width:300px;margin:0 auto}
-              .header{ text-align:center }
-              .address{font-size:12px;color:#333;margin-bottom:6px}
-              table{width:100%;border-collapse:collapse;font-size:12px}
-              thead th{font-weight:700;text-align:left;padding:6px 0}
-              tbody td{padding:6px 0}
-              .col-name{width:55%}
-              .col-qty{width:15%;text-align:right}
-              .col-price{width:15%;text-align:right}
-              .col-line{width:15%;text-align:right}
-              .total{font-size:14px;font-weight:700;margin-top:8px;text-align:right}
-              .thankyou{margin-top:10px;text-align:center;font-weight:600}
-              @media print { body{width:300px} }
+            /* Thiết kế tối ưu cho giấy nhiệt khổ 80mm (~320px) */
+            body{font-family: 'Segoe UI', Roboto, Arial, Helvetica, sans-serif; color:#111; margin:0; padding:8px; -webkit-print-color-adjust:exact}
+            .receipt{width:320px; max-width:320px; margin:0 auto}
+            .header{text-align:center}
+            .header .title{font-size:20px; font-weight:700; margin:0}
+            .address{font-size:12px; color:#444; margin-bottom:6px}
+            .meta{font-size:12px; margin:6px 0}
+            table{width:100%; border-collapse:collapse; font-size:13px}
+            thead th{font-weight:700; text-align:left; padding:6px 0}
+            tbody td{padding:4px 0; border-bottom:1px dashed #e8e8e8}
+            .col-name{width:55%}
+            .col-qty, .col-price, .col-line{width:15%; text-align:right}
+            .total{font-size:18px; font-weight:800; margin-top:8px; text-align:right; padding-top:6px; border-top:2px solid #222}
+            .thankyou{margin-top:10px; text-align:center; font-weight:600; font-size:13px}
+            @media print { body{margin:0; padding:4px} .receipt{width:320px} }
           </style>
         </head>
         <body>
             <div class="receipt">
               <div class="header">
-                <h2 style="margin:0">Nhà Hàng Long Chuyên</h2>
+                <div class="title">Nhà Hàng Long Chuyên</div>
                 <div class="address">Thôn Lau - Hoàng Lâu - Tam Dương - Vĩnh Phúc</div>
               </div>
-              <div style="margin:6px 0"><strong>Hóa đơn - Bàn ${data.table}</strong></div>
+              <div class="meta"><strong>Hóa đơn - Bàn ${data.table}</strong></div>
               <div style="font-size:12px;margin-bottom:8px">Thời gian: ${formattedDate}</div>
               <table>
                 <thead><tr><th class="col-name">Món</th><th class="col-qty">SL</th><th class="col-price">Giá</th><th class="col-line">Thành</th></tr></thead>
@@ -729,20 +730,49 @@ function printBill() {
   }
   const currentDate = new Date();
   const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
-  const billWithDate = `
-    <div style="text-align: 0; font-family: Arial, Helvetica, sans-serif;">
-      <h1 style="margin:0">Nhà Hàng Long Chuyên</h1>
-      <div style="font-size:12px;color:#333;margin-bottom:6px">Thôn Lau - Hoàng Lâu - Tam Dương - Vĩnh Phúc</div>
-      <h2 style="margin:6px 0">Hóa đơn - Bàn ${currentTable}</h2>
-      <p style="margin:0 0 8px"><i>Ngày: ${formattedDate}</i></p>
-      ${billContent}
-      <div style="margin-top:10px;text-align:center;font-weight:600">Xin cảm ơn quý khách !</div>
-    </div>
+  const billHtml = `
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Hóa đơn - Bàn ${currentTable}</title>
+        <style>
+          body{font-family: 'Segoe UI', Roboto, Arial, Helvetica, sans-serif; color:#111; margin:0; padding:8px}
+          .receipt{width:320px; max-width:320px; margin:0 auto}
+          .header{text-align:center}
+          .header .title{font-size:20px;font-weight:700;margin:0}
+          .address{font-size:12px;color:#444;margin-bottom:6px}
+          .meta{font-size:12px;margin:6px 0}
+          table{width:100%;border-collapse:collapse;font-size:13px}
+          thead th{font-weight:700;text-align:left;padding:6px 0}
+          tbody td{padding:4px 0;border-bottom:1px dashed #e8e8e8}
+          .col-name{width:55%}
+          .col-qty,.col-price,.col-line{text-align:right;width:15%}
+          .total{font-size:18px;font-weight:800;margin-top:8px;text-align:right;padding-top:6px;border-top:2px solid #222}
+          .thankyou{margin-top:10px;text-align:center;font-weight:600;font-size:13px}
+          @media print{ body{margin:0;padding:4px} .receipt{width:320px} }
+        </style>
+      </head>
+      <body>
+        <div class="receipt">
+          <div class="header">
+            <div class="title">Nhà Hàng Long Chuyên</div>
+            <div class="address">Thôn Lau - Hoàng Lâu - Tam Dương - Vĩnh Phúc</div>
+          </div>
+          <div class="meta"><strong>Hóa đơn - Bàn ${currentTable}</strong></div>
+          <div style="font-size:12px;margin-bottom:8px">Ngày: ${formattedDate}</div>
+          ${billContent}
+          <div class="total">Tổng: ${orderList.reduce((s, it) => s + it.qty * it.price, 0).toLocaleString()} đ</div>
+          <div class="thankyou">Xin cảm ơn quý khách !</div>
+        </div>
+      </body>
+    </html>
   `;
-  const printWindow = window.open('', '', 'width=600,height=400');
-  printWindow.document.write(billWithDate);
+  const printWindow = window.open('', '', 'width=420,height=680');
+  if (!printWindow) { showNotification('Không thể mở cửa sổ in. Vui lòng cho phép popup.', 'error'); return; }
+  printWindow.document.open();
+  printWindow.document.write(billHtml);
   printWindow.document.close();
-  printWindow.print();
+  setTimeout(()=>{ try{ printWindow.focus(); printWindow.print(); }catch(e){ console.error(e); } }, 400);
 }
 
 function markAsPaid() {
