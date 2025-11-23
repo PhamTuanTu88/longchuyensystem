@@ -798,6 +798,7 @@ function markAsPaid() {
     table: currentTable,
     items: orderList,
     total: total,
+    createdAt: new Date().toISOString()
   };
 
   fetch('/save-invoice', {
@@ -810,6 +811,9 @@ function markAsPaid() {
   .then(response => response.json())
   .then(data => {
     showNotification(data.message || 'Lưu hóa đơn thành công!', 'success');
+
+    // Gọi lại getReport để cập nhật khu báo cáo tổng kết (kho tổng kết)
+    getReport();
 
     // Xóa order của bàn (ghi lại id trước khi reset currentTable)
     const clearedTable = currentTable;
@@ -846,6 +850,7 @@ let _lastReport = null;
 
 function formatNumber(n){ return Number(n||0).toLocaleString(); }
 
+
 function getReport() {
   const type = document.getElementById('report-type').value;
   const date = document.getElementById('report-date').value;
@@ -857,6 +862,9 @@ function getReport() {
       document.getElementById('report-count').textContent = data.count || 0;
       _lastReport = data;
       showNotification('Báo cáo đã tải', 'success');
+      // Nếu muốn render nhanh vào kho tổng kết trên giao diện luôn từ dữ liệu server ở đây thêm đoạn sau,
+      // hoặc dùng API khác / thêm phần phía backend trả về chi tiết từng bill để render table chi tiết.
+      // Hoặc bạn tiếp tục dùng phần kho tổng kết tạm ở localStorage cho "Tổng kết cá nhân" nếu cần.
     })
     .catch(err => {
       console.error(err);
