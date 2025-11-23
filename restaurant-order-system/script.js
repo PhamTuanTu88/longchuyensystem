@@ -730,6 +730,9 @@ function printBill() {
   }
   const currentDate = new Date();
   const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
+  const orderList = tableOrders[currentTable] || [];
+  const total = orderList.reduce((s, it) => s + (it.qty * it.price), 0);
+
   const billHtml = `
     <html>
       <head>
@@ -761,7 +764,7 @@ function printBill() {
           <div class="meta"><strong>Hóa đơn - Bàn ${currentTable}</strong></div>
           <div style="font-size:12px;margin-bottom:8px">Ngày: ${formattedDate}</div>
           ${billContent}
-          <div class="total">Tổng: ${orderList.reduce((s, it) => s + it.qty * it.price, 0).toLocaleString()} đ</div>
+          <div class="total">Tổng: ${total.toLocaleString()} đ</div>
           <div class="thankyou">Xin cảm ơn quý khách !</div>
         </div>
       </body>
