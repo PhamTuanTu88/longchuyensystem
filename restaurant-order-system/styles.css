@@ -108,6 +108,46 @@ header {
   overflow-y: auto;
 }
 
+/* New layout: menu + cart columns */
+.menu-cart {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* left: menu column */
+.menu-column {
+  flex: 1;
+  min-width: 0; /* allow inputs to shrink nicely */
+}
+
+/* right: cart column */
+.cart-column {
+  width: 340px;
+  max-width: 40%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+/* make the table area scrollable if long */
+.cart-list-wrap {
+  overflow: auto;
+  max-height: calc(60vh - 120px);
+}
+
+/* small spacing tweaks */
+.cart-column h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+/* rest of original styles */
 .order-header {
   margin-bottom: 24px;
   padding-bottom: 16px;
@@ -273,6 +313,13 @@ tbody tr:last-child td {
   }
   .menu-list {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+  .menu-cart {
+    flex-direction: column;
+  }
+  .cart-column {
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -893,5 +940,3 @@ tbody tr:last-child td {
 }
 
 .price-btn:active { transform: translateY(0); }
-
-
