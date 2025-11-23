@@ -453,22 +453,37 @@ function printRemoteInvoice(data) {
           <meta charset="utf-8">
           <title>Hóa đơn - Bàn ${data.table}</title>
           <style>
-            body{font-family:Arial,Helvetica,sans-serif;padding:12px}
-            table{width:100%;border-collapse:collapse}
-            th,td{border-bottom:1px solid #ddd}
+              body{font-family:Arial,Helvetica,sans-serif;padding:8px;width:300px}
+              .receipt{width:300px;margin:0 auto}
+              .header{ text-align:center }
+              .address{font-size:12px;color:#333;margin-bottom:6px}
+              table{width:100%;border-collapse:collapse;font-size:12px}
+              thead th{font-weight:700;text-align:left;padding:6px 0}
+              tbody td{padding:6px 0}
+              .col-name{width:55%}
+              .col-qty{width:15%;text-align:right}
+              .col-price{width:15%;text-align:right}
+              .col-line{width:15%;text-align:right}
+              .total{font-size:14px;font-weight:700;margin-top:8px;text-align:right}
+              .thankyou{margin-top:10px;text-align:center;font-weight:600}
+              @media print { body{width:300px} }
           </style>
         </head>
         <body>
-          <h2>Nhà Hàng Long Chuyên</h2>
-          <div style="font-size:12px;color:#333;margin-bottom:6px">Thôn Lau - Hoàng Lâu - Tam Dương - Vĩnh Phúc</div>
-          <h3>Hóa đơn - Bàn ${data.table}</h3>
-          <div>Thời gian: ${formattedDate}</div>
-          <table>
-            <thead><tr><th>Món</th><th>SL</th><th>Giá</th><th>Thành tiền</th></tr></thead>
-            <tbody>${itemsHtml}</tbody>
-          </table>
-          <h3 style="text-align:right">Tổng: ${total.toLocaleString()} đ</h3>
-          <div style="margin-top:10px;text-align:center;font-weight:600">Xin cảm ơn quý khách !</div>
+            <div class="receipt">
+              <div class="header">
+                <h2 style="margin:0">Nhà Hàng Long Chuyên</h2>
+                <div class="address">Thôn Lau - Hoàng Lâu - Tam Dương - Vĩnh Phúc</div>
+              </div>
+              <div style="margin:6px 0"><strong>Hóa đơn - Bàn ${data.table}</strong></div>
+              <div style="font-size:12px;margin-bottom:8px">Thời gian: ${formattedDate}</div>
+              <table>
+                <thead><tr><th class="col-name">Món</th><th class="col-qty">SL</th><th class="col-price">Giá</th><th class="col-line">Thành</th></tr></thead>
+                <tbody>${itemsHtml}</tbody>
+              </table>
+              <div class="total">Tổng: ${total.toLocaleString()} đ</div>
+              <div class="thankyou">Xin cảm ơn quý khách !</div>
+            </div>
         </body>
       </html>
     `;

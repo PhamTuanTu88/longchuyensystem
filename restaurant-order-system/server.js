@@ -287,25 +287,45 @@ app.post('/print', isAuthenticated, (req, res) => {
     doc.text(`Thời gian: ${new Date().toLocaleString()}`);
     doc.moveDown(0.5);
 
+    // Table header
     doc.fontSize(11);
-    doc.text('Món', { continued: true }); doc.text('SL', { align: 'right', continued: true }); doc.text('Giá', { align: 'right' });
-    doc.moveDown(0.25);
+    const startX = doc.x;
+    const col1 = startX; // name
+    const col2 = col1 + 140; // qty
+    const col3 = col2 + 40; // price
+    const col4 = col3 + 90; // line total
 
+    doc.font('Courier-Bold').text('Món', col1, doc.y, { width: 140 });
+    doc.font('Courier-Bold').text('SL', col2, doc.y, { width: 40, align: 'right' });
+    doc.font('Courier-Bold').text('Giá', col3, doc.y, { width: 90, align: 'right' });
+    doc.font('Courier-Bold').text('Thành tiền', col4, doc.y, { width: 90, align: 'right' });
+    doc.moveDown(0.3);
+
+    // rows
     let total = 0;
+    doc.font('Courier');
     data.items.forEach(it => {
       const line = (it.qty || 1) * (Number(it.price) || 0);
       total += line;
-      doc.text(`${it.name}`, { continued: true });
-      doc.text(`${it.qty || 1}`, { align: 'right', continued: true });
-      doc.text(`${(Number(it.price) || 0).toLocaleString()} đ`, { align: 'right' });
+      const y = doc.y;
+      doc.text(String(it.name).slice(0, 30), col1, y, { width: 140 });
+      doc.text(String(it.qty || 1), col2, y, { width: 40, align: 'right' });
+      doc.text((Number(it.price) || 0).toLocaleString() + ' đ', col3, y, { width: 90, align: 'right' });
+      doc.text(line.toLocaleString() + ' đ', col4, y, { width: 90, align: 'right' });
+      doc.moveDown(0.3);
     });
 
-    doc.moveDown(0.5);
-    doc.fontSize(13).text(`Tổng: ${total.toLocaleString()} đ`, { align: 'right' });
+    doc.moveDown(0.2);
+    // separator
+    const lineY = doc.y;
+    doc.strokeColor('#444').moveTo(col1, lineY).lineTo(col4 + 90, lineY).stroke();
+    doc.moveDown(0.3);
+
+    doc.font('Courier-Bold').fontSize(13).text(`Tổng: ${total.toLocaleString()} đ`, col3, doc.y, { width: 220, align: 'right' });
 
     // thank you note
     doc.moveDown(0.8);
-    doc.fontSize(11).text('Xin cảm ơn quý khách !', { align: 'center' });
+    doc.font('Helvetica').fontSize(11).text('Xin cảm ơn quý khách !', { align: 'center' });
 
     doc.end();
 
