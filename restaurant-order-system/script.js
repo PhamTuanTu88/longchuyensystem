@@ -19,6 +19,8 @@ const MENU = {
 { name: "Đậu xốt ba chỉ", price: 90000 },
 { name: "Đậu xốt tóp mỡ", price: 90000 },
 { name: "Khoai tây chiên", price: 30000 },
+{ name: "Rau xào", price: 20000 },
+{ name: "Rau luộc", price: 20000 },
 { name: "Mực Khô", price: 180000 },
 { name: "Mực Xào", price: 120000 },
 { name: "Mực hấp", price: 120000 },
@@ -111,6 +113,8 @@ const MENU = {
     { name: "Lẩu Ếch", price: 600000 },
     { name: "Lẩu Vịt Măng Cay", price: 600000 },
     { name: "Lẩu Dê", price: 600000 },
+    { name: "Mì tôm thêm", price: 25000 },
+    { name: "Rau thêm", price: 20000 },
   ],
   co: [
     { name: "Cỗ Món Theo Yêu Cầu", price: 600000 },
