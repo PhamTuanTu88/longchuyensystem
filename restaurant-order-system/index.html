@@ -95,39 +95,50 @@
       <small id="order-note">Bấm bàn bên trái để bắt đầu order</small>
     </div>
 
-    <div class="menu-tabs">
-      <button id="tab-bia" class="active" onclick="setCategory('bia')">Bia / nhậu</button>
-      <button id="tab-lau" onclick="setCategory('lau')">Lẩu</button>
-      <button id="tab-co" onclick="setCategory('co')">Cỗ món theo yêu cầu</button>
-    </div>
+    <!-- TWO-COLUMN AREA: MENU (TRÁI) + CART (PHẢI) -->
+    <div class="menu-cart">
+      <div class="menu-column">
+        <div class="menu-tabs">
+          <button id="tab-bia" class="active" onclick="setCategory('bia')">Bia / nhậu</button>
+          <button id="tab-lau" onclick="setCategory('lau')">Lẩu</button>
+          <button id="tab-co" onclick="setCategory('co')">Cỗ món theo yêu cầu</button>
+        </div>
 
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-      <input id="menu-search" type="search" placeholder="Tìm món..." style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px" />
-      <button id="menu-clear-search" title="Xóa tìm kiếm" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card)">✖</button>
-    </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <input id="menu-search" type="search" placeholder="Tìm món..." style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px" />
+          <button id="menu-clear-search" title="Xóa tìm kiếm" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card)">✖</button>
+        </div>
 
-    <div id="menu-list" class="menu-list"></div>
+        <div id="menu-list" class="menu-list"></div>
+      </div>
 
-    <h4>Danh sách món đã order</h4>
-    <table>
-      <thead>
-        <tr>
-          <th>Món</th>
-          <th>SL</th>
-          <th>Giá</th>
-          <th>Thành tiền</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="order-body"></tbody>
-    </table>
-    <div class="total-line">
-      Tổng: <span id="order-total">0</span> đ
+      <div class="cart-column">
+        <h4>Danh sách món đã order</h4>
+        <div class="cart-list-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Món</th>
+                <th>SL</th>
+                <th>Giá</th>
+                <th>Thành tiền</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="order-body"></tbody>
+          </table>
+        </div>
+
+        <div class="total-line" style="margin-top:8px">
+          Tổng: <span id="order-total">0</span> đ
+        </div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button id="btn-payment" onclick="payment()" style="margin-right: 12px;">Thanh toán</button>
+          <button id="btn-add-summary" style="margin-right: 20px;">Tổng kết</button>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="total-line">
-    <button id="btn-payment" onclick="payment()" style="margin-right: 12px;">Thanh toán</button>
-    <button id="btn-add-summary" style="margin-right: 20px;">Tổng kết</button>
   </div>
 
   <!-- Reports panel -->
