@@ -464,16 +464,16 @@ function printRemoteInvoice(data) {
             body{font-family: 'Segoe UI', Roboto, Arial, Helvetica, sans-serif; color:#111; margin:0; padding:8px; -webkit-print-color-adjust:exact}
             .receipt{width:320px; max-width:320px; margin:0 auto}
             .header{text-align:center}
-            .header .title{font-size:24px; font-weight:700; margin:0}
-            .address{font-size:13px; color:#444; margin-bottom:6px}
-            .meta{font-size:13px; margin:6px 0}
-            table{width:100%; border-collapse:collapse; font-size:14px}
-            thead th{font-weight:700; text-align:left; padding:6px 0}
-            tbody td{padding:6px 0; border-bottom:1px dashed #e8e8e8}
+            .header .title{font-size:28px; font-weight:800; margin:0}
+            .address{font-size:14px; color:#333; margin-bottom:6px}
+            .meta{font-size:14px; margin:6px 0}
+            table{width:100%; border-collapse:collapse; font-size:16px}
+            thead th{font-weight:800; text-align:left; padding:8px 0}
+            tbody td{padding:8px 0; border-bottom:1px dashed #e8e8e8}
             .col-name{width:55%}
             .col-qty, .col-price, .col-line{width:15%; text-align:right}
-            .total{font-size:22px; font-weight:800; margin-top:8px; text-align:right; padding-top:6px; border-top:2px solid #222}
-            .thankyou{margin-top:10px; text-align:center; font-weight:700; font-size:14px}
+            .total{font-size:26px; font-weight:900; margin-top:10px; text-align:right; padding-top:8px; border-top:2px solid #222}
+            .thankyou{margin-top:12px; text-align:center; font-weight:800; font-size:16px}
             @media print { body{margin:0; padding:4px} .receipt{width:320px} }
           </style>
         </head>
@@ -749,16 +749,16 @@ function printBill() {
           body{font-family: 'Segoe UI', Roboto, Arial, Helvetica, sans-serif; color:#111; margin:0; padding:8px}
           .receipt{width:320px; max-width:320px; margin:0 auto}
           .header{text-align:center}
-          .header .title{font-size:24px;font-weight:700;margin:0}
-          .address{font-size:13px;color:#444;margin-bottom:6px}
-          .meta{font-size:13px;margin:6px 0}
-          table{width:100%;border-collapse:collapse;font-size:14px}
-          thead th{font-weight:700;text-align:left;padding:6px 0}
-          tbody td{padding:6px 0;border-bottom:1px dashed #e8e8e8}
+          .header .title{font-size:28px;font-weight:800;margin:0}
+          .address{font-size:14px;color:#333;margin-bottom:6px}
+          .meta{font-size:14px;margin:6px 0}
+          table{width:100%;border-collapse:collapse;font-size:16px}
+          thead th{font-weight:800;text-align:left;padding:8px 0}
+          tbody td{padding:8px 0;border-bottom:1px dashed #e8e8e8}
           .col-name{width:55%}
           .col-qty,.col-price,.col-line{text-align:right;width:15%}
-          .total{font-size:22px;font-weight:800;margin-top:8px;text-align:right;padding-top:6px;border-top:2px solid #222}
-          .thankyou{margin-top:10px;text-align:center;font-weight:700;font-size:14px}
+          .total{font-size:26px;font-weight:900;margin-top:8px;text-align:right;padding-top:8px;border-top:2px solid #222}
+          .thankyou{margin-top:12px;text-align:center;font-weight:800;font-size:16px}
           @media print{ body{margin:0;padding:4px} .receipt{width:320px} }
         </style>
       </head>
