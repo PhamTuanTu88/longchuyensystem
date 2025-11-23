@@ -715,11 +715,13 @@ function printBill() {
   const currentDate = new Date();
   const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
   const billWithDate = `
-    <div style="text-align: 0;">
-      <h1>Nhà Hàng Long Chuyên</h1>
-      <h2>Hóa đơn - Bàn ${currentTable}</h2>
-      <p><i>Ngày: ${formattedDate}</i></p>
+    <div style="text-align: 0; font-family: Arial, Helvetica, sans-serif;">
+      <h1 style="margin:0">Nhà Hàng Long Chuyên</h1>
+      <div style="font-size:12px;color:#333;margin-bottom:6px">Thôn Lau - Hoàng Lâu - Tam Dương - Vĩnh Phúc</div>
+      <h2 style="margin:6px 0">Hóa đơn - Bàn ${currentTable}</h2>
+      <p style="margin:0 0 8px"><i>Ngày: ${formattedDate}</i></p>
       ${billContent}
+      <div style="margin-top:10px;text-align:center;font-weight:600">Xin cảm ơn quý khách !</div>
     </div>
   `;
   const printWindow = window.open('', '', 'width=600,height=400');
