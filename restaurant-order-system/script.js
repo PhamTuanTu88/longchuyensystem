@@ -801,10 +801,15 @@ function markAsPaid() {
     createdAt: new Date().toISOString()
   };
 
+  // If user has a print/save token (for unauthenticated devices), include it so server can accept the request
+  const saveToken = localStorage.getItem('printToken') || null;
+  if (saveToken) paymentData.saveToken = saveToken;
+
   fetch('/save-invoice', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-save-token': saveToken || ''
     },
     body: JSON.stringify(paymentData),
   })
@@ -972,8 +977,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleBtn = document.getElementById('btn-toggle-reports');
   if (toggleBtn) toggleBtn.addEventListener('click', toggleReports);
 
-  const addSummaryBtn = document.getElementById('btn-add-summary');
-  if (addSummaryBtn) addSummaryBtn.addEventListener('click', addToSummary);
+  // The fixed bar 'Tổng kết' button now opens the reports panel (daily/monthly/yearly)
+  const openReportsBtn = document.getElementById('btn-open-reports') || document.getElementById('btn-add-summary');
+  if (openReportsBtn) openReportsBtn.addEventListener('click', () => {
+    // ensure report date defaults to today and show reports UI
+    const dateEl = document.getElementById('report-date');
+    if (dateEl) dateEl.value = new Date().toISOString().slice(0,10);
+    const typeEl = document.getElementById('report-type');
+    if (typeEl) typeEl.value = 'daily';
+    toggleReports();
+  });
 
   const clearBtn = document.getElementById('btn-clear-summaries');
   if (clearBtn) clearBtn.addEventListener('click', clearSummaries);

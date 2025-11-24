@@ -39,6 +39,16 @@ function allowPrintAuth(req, res, next){
   return res.status(401).json({ message: 'Unauthorized (print token missing or invalid)' });
 }
 
+// allow saving invoices either by session auth or by a save token (or print token)
+function allowSaveAuth(req, res, next) {
+  if (req.session && req.session.authenticated) return next();
+  const token = req.body && (req.body.saveToken || req.body.printToken) || req.headers['x-save-token'] || req.headers['x-print-token'];
+  if (!token) return res.status(401).json({ message: 'Unauthorized (save token missing)' });
+  // accept either SAVE_TOKEN or PRINT_TOKEN for backward compatibility
+  if ((process.env.SAVE_TOKEN && token === process.env.SAVE_TOKEN) || (process.env.PRINT_TOKEN && token === process.env.PRINT_TOKEN)) return next();
+  return res.status(401).json({ message: 'Unauthorized (save token invalid)' });
+}
+
 // Root -> serve index.html trực tiếp (protected)
 app.get('/', isAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -114,7 +124,7 @@ try {
 }
 
 // Lưu hóa đơn
-app.post('/save-invoice', isAuthenticated, (req, res) => {
+app.post('/save-invoice', allowSaveAuth, (req, res) => {
   const bill = req.body;
   console.log('POST /save-invoice called');
   try { console.log('bill summary:', { table: bill && bill.table, items: bill && bill.items && bill.items.length, total: bill && bill.total }); } catch(e){}
