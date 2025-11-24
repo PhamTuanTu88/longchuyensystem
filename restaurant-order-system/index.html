@@ -106,23 +106,31 @@
       <button id="menu-clear-search" title="Xóa tìm kiếm" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card)">✖</button>
     </div>
 
-    <div id="menu-list" class="menu-list"></div>
+    <div class="menu-and-order">
+      <div class="menu-col">
+        <div id="menu-list" class="menu-list"></div>
+      </div>
 
-    <h4>Danh sách món đã order</h4>
-    <table>
-      <thead>
-        <tr>
-          <th>Món</th>
-          <th>SL</th>
-          <th>Giá</th>
-          <th>Thành tiền</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="order-body"></tbody>
-    </table>
-    <div class="total-line">
-      Tổng: <span id="order-total">0</span> đ
+      <aside class="order-col">
+        <h4>Danh sách món đã order</h4>
+        <div class="order-summary">
+          <table>
+            <thead>
+              <tr>
+                <th>Món</th>
+                <th>SL</th>
+                <th>Giá</th>
+                <th>Thành tiền</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="order-body"></tbody>
+          </table>
+          <div class="total-line">
+            Tổng: <span id="order-total">0</span> đ
+          </div>
+        </div>
+      </aside>
     </div>
   </div>
   <div class="total-line">

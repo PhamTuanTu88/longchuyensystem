@@ -166,6 +166,33 @@ header {
   flex-shrink: 0;
 }
 
+/* Layout for menu + order side-by-side inside order-panel */
+.menu-and-order {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.menu-col {
+  flex: 1 1 65%;
+}
+.order-col {
+  flex: 0 0 320px; /* fixed width for order summary on the right */
+}
+.order-summary {
+  position: sticky;
+  top: 88px; /* leave space for header */
+  background: transparent;
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+}
+.order-summary table { margin-bottom: 12px; }
+
+@media (max-width: 900px) {
+  .menu-and-order { flex-direction: column; }
+  .order-col { flex: 1 1 auto; width: auto; }
+  .order-summary { position: relative; top: auto; max-height: none; }
+}
+
 .menu-item {
   background: var(--card);
   border: 2px solid var(--border);
