@@ -303,6 +303,28 @@ tbody tr:last-child td {
   }
 }
 
+/* Fixed payment bar */
+#fixed-payment-bar {
+  position: fixed;
+  top: 68px; /* just under header */
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(255,255,255,0.96);
+  padding: 8px 12px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+}
+#fixed-payment-bar button { min-width: 120px; }
+
+@media (max-width: 900px) {
+  /* on small screens, move to bottom center so it doesn't overlap header */
+  #fixed-payment-bar { top: auto; bottom: 14px; left: 50%; transform: translateX(-50%); right: auto; width: calc(100% - 32px); justify-content: center; }
+  #fixed-payment-bar button { min-width: 140px; }
+}
+
 
 /* ===== MODAL HÓA ĐƠN ===== */
 .modal {

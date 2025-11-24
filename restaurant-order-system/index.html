@@ -83,6 +83,11 @@
 <div style="position:relative;padding:8px 16px">
   <button id="btn-toggle-reports" style="position:absolute;right:16px;top:8px">Tổng kết</button>
 </div>
+<!-- fixed payment bar (will be visible at top-right on desktop, bottom center on mobile) -->
+<div id="fixed-payment-bar" aria-hidden="false">
+  <button id="btn-payment" onclick="payment()" style="margin-right:12px;">Thanh toán</button>
+  <button id="btn-add-summary" style="margin-right:0;">Tổng kết</button>
+</div>
 <div class="layout">
   <div class="tables-panel">
     <h3>Chọn bàn</h3>
@@ -133,10 +138,7 @@
       </aside>
     </div>
   </div>
-  <div class="total-line">
-    <button id="btn-payment" onclick="payment()" style="margin-right: 12px;">Thanh toán</button>
-    <button id="btn-add-summary" style="margin-right: 20px;">Tổng kết</button>
-  </div>
+  <!-- old inline payment buttons removed (now in fixed bar) -->
 
   <!-- Reports panel -->
   <div id="reports-container" style="display:none;">
