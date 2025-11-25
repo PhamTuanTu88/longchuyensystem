@@ -117,6 +117,7 @@ const MENU = {
     { name: "Lẩu Cá", price: 800000 },
     { name: "Lẩu Ngựa", price: 600000 },
     { name: "Lẩu Ếch", price: 600000 },
+    { name: "Cá chép om dưa", price: 600000 },
     { name: "Lẩu Vịt Măng Cay", price: 600000 },
     { name: "Lẩu Dê", price: 600000 },
     { name: "Mì tôm thêm", price: 25000 },
