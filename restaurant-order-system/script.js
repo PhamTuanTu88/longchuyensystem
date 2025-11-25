@@ -119,6 +119,12 @@ const MENU = {
     { name: "Lẩu Dê", price: 600000 },
     { name: "Mì tôm thêm", price: 25000 },
     { name: "Rau thêm", price: 20000 },
+    { name: "Bò thêm", price: 0 },
+    { name: "Ếch thêm", price: 0 },
+    { name: "Sụn thêm", price: 0 },
+    { name: "Tôm thêm", price: 0 },
+    { name: "Cá thêm", price: 0 },
+    { name: "Mọc ốc thêm", price: 0 },
   ],
   co: [
     { name: "Cỗ Món Theo Yêu Cầu", price: 600000 },
