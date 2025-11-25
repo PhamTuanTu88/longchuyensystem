@@ -1,18 +1,18 @@
 // ...existing code...
 const MENU = {
-  bia: [
-    { name: "Bia Cốc", price: 10000 },
-    { name: "Nước Ngọt", price: 10000 },
-    { name: "Bia Âu", price: 40000 },
-    { name: "Bia nửa Âu", price: 20000 },
-    { name: "Bia Tháp", price: 65000 },
-    { name: "Rượu Chai", price: 20000 },
-    { name: "Nước Lọc", price: 10000 },
-    { name: "Rượu Âu", price: 80000 },
-    { name: "Lạc Rang", price: 10000 },
-    { name: "Nem Chua", price: 25000 },
-    { name: "Nem Bùi", price: 35000 },
-    { name: "Bánh Đa", price: 35000 },
+bia: [
+{ name: "Bia Cốc", price: 10000 },
+{ name: "Nước Ngọt", price: 10000 },
+{ name: "Bia Âu", price: 40000 },
+{ name: "Bia nửa Âu", price: 20000 },
+{ name: "Bia Tháp", price: 65000 },
+{ name: "Rượu Chai", price: 20000 },
+{ name: "Nước Lọc", price: 10000 },
+{ name: "Rượu Âu", price: 80000 },
+{ name: "Lạc Rang", price: 10000 },
+{ name: "Nem Chua", price: 25000 },
+{ name: "Nem Bùi", price: 35000 },
+{ name: "Bánh Đa", price: 35000 },
 
 
 { name: "Thịt chua", price: 60000 },
@@ -96,10 +96,12 @@ const MENU = {
 { name: "Vịt rang muối", price: 0 },
 { name: "Vịt chiên giềng", price: 0 },
 { name: "Vịt xào hành răm", price: 0 },
+{ name: "Ốc om chuối đậu", price: 60000 },
+{ name: "Cá chép xốt cà chua", price: 0 },
 { name: "Canh miến", price: 0 },
 { name: "Mì xào", price: 0 },
-    { name: "Xôi đĩa", price: 40000 },
-    { name: "Xôi Chim Câu", price: 0 },
+{ name: "Xôi đĩa", price: 40000 },
+{ name: "Xôi Chim Câu", price: 0 },
 { name: "Chả nướng", price: 100000 },
 { name: "Thuốc lá Thăng Long", price: 15000 },
 { name: "Thuốc lá Sài Gòn xanh", price: 15000 },
@@ -117,7 +119,7 @@ const MENU = {
     { name: "Lẩu Cá", price: 800000 },
     { name: "Lẩu Ngựa", price: 600000 },
     { name: "Lẩu Ếch", price: 600000 },
-    { name: "Cá chép om dưa", price: 600000 },
+    { name: "Cá chép om dưa", price: 0 },
     { name: "Lẩu Vịt Măng Cay", price: 600000 },
     { name: "Lẩu Dê", price: 600000 },
     { name: "Mì tôm thêm", price: 25000 },
@@ -130,7 +132,15 @@ const MENU = {
     { name: "Mọc ốc thêm", price: 0 },
   ],
   co: [
+    { name: "Cỗ Món Theo Yêu Cầu", price: 500000 },
     { name: "Cỗ Món Theo Yêu Cầu", price: 600000 },
+    { name: "Cỗ Món Theo Yêu Cầu", price: 700000 },
+    { name: "Cỗ Món Theo Yêu Cầu", price: 800000 },
+    { name: "Cỗ Món Theo Yêu Cầu", price: 900000 },
+    { name: "Cỗ Món Theo Yêu Cầu", price: 1000000 },
+    { name: "Cỗ Món Theo Yêu Cầu", price: 1100000 },
+    { name: "Cỗ Món Theo Yêu Cầu", price: 1200000 },
+    { name: "Cỗ Món Theo Yêu Cầu", price: 1300000 },
   ]
 };
 
