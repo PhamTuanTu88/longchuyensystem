@@ -113,6 +113,7 @@ bia: [
   ],
   lau: [
     { name: "Lẩu Riêu Cua Thập Cẩm", price: 600000 },
+    { name: "Lẩu Riêu Cua Bắp Bò", price: 400000 },
     { name: "Lẩu Gà", price: 600000 },
     { name: "Lẩu Gà Bò", price: 600000 },
     { name: "Lẩu Hải Sản", price: 600000 },
