@@ -7,6 +7,7 @@ const MENU = {
     { name: "Bia nửa Âu", price: 20000 },
     { name: "Bia Tháp", price: 65000 },
     { name: "Rượu Chai", price: 20000 },
+    { name: "Nước Lọc", price: 10000 },
     { name: "Rượu Âu", price: 80000 },
     { name: "Lạc Rang", price: 10000 },
     { name: "Nem Chua", price: 25000 },
