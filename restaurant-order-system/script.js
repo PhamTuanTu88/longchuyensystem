@@ -2,7 +2,7 @@
 const MENU = {
 bia: [
 { name: "Bia Cốc", price: 10000 },
-{ name: "Nước Ngọt", price: 10000 },
+{ name: "Nước Ngọt", price: 5000 },
 { name: "Bia Âu", price: 40000 },
 { name: "Bia nửa Âu", price: 20000 },
 { name: "Bia Tháp", price: 65000 },
@@ -23,6 +23,10 @@ bia: [
 { name: "Đậu xốt tóp mỡ", price: 90000 },
 { name: "Khoai tây chiên", price: 30000 },
 { name: "Rau xào", price: 20000 },
+{ name: "Trứng rán nóng", price: 0 },
+{ name: "Trứng lá mơ", price: 0 },
+{ name: "Trứng lá ngải", price: 0 },
+{ name: "Trứng vịt lộn", price: 0 },
 { name: "Rau luộc", price: 20000 },
 { name: "Mực Khô", price: 180000 },
 { name: "Mực Xào", price: 120000 },
@@ -102,6 +106,8 @@ bia: [
 { name: "Ốc om chuối đậu", price: 60000 },
 { name: "Cá chép xốt cà chua", price: 0 },
 { name: "Canh miến", price: 0 },
+{ name: "Mì gạo canh", price: 0 },
+{ name: "Mì gạo luộc", price: 0 },
 { name: "Mì xào", price: 0 },
 { name: "Xôi đĩa", price: 40000 },
 { name: "Xôi Chim Câu", price: 0 },
