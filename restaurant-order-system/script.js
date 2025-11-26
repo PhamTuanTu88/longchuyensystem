@@ -94,6 +94,7 @@ bia: [
 { name: "Vịt nướng", price: 0 },
 { name: "Vịt đủ món", price: 0 },
 { name: "Vịt luộc", price: 0 },
+{ name: "Vịt tiết canh", price: 0 },
 { name: "Vịt rang muối", price: 0 },
 { name: "Vịt chiên giềng", price: 0 },
 { name: "Vịt xào hành răm", price: 0 },
