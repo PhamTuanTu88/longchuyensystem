@@ -15,7 +15,7 @@ bia: [
 { name: "Nem Bùi", price: 35000 },
 { name: "Bánh Đa", price: 35000 },
 
-
+{ name: "Hoa Quả đĩa", price: 0 },
 { name: "Thịt chua", price: 60000 },
 { name: "Đậu lướt", price: 30000 },
 { name: "Đậu chiên", price: 30000 },
