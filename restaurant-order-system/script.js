@@ -6,6 +6,7 @@ bia: [
 { name: "Bia Âu", price: 40000 },
 { name: "Bia nửa Âu", price: 20000 },
 { name: "Bia Tháp", price: 65000 },
+{ name: "Bia lon", price: 15000 },
 { name: "Rượu Chai", price: 20000 },
 { name: "Nước Lọc", price: 10000 },
 { name: "Rượu Âu", price: 80000 },
