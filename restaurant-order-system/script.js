@@ -92,6 +92,7 @@ bia: [
 { name: "Ếch om chuối đậu", price: 150000 },
 { name: "Ếch xào xả ớt", price: 80000 },
 { name: "Vịt nướng", price: 0 },
+{ name: "Vịt đủ món", price: 0 },
 { name: "Vịt luộc", price: 0 },
 { name: "Vịt rang muối", price: 0 },
 { name: "Vịt chiên giềng", price: 0 },
