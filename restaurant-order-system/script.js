@@ -13,7 +13,7 @@ bia: [
 { name: "Lạc Rang", price: 10000 },
 { name: "Nem Chua", price: 25000 },
 { name: "Nem Bùi", price: 35000 },
-{ name: "Bánh Đa", price: 35000 },
+{ name: "Bánh Đa", price: 20000 },
 
 { name: "Hoa Quả đĩa", price: 0 },
 { name: "Thịt chua", price: 60000 },
