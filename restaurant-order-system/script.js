@@ -22,6 +22,8 @@ bia: [
 { name: "Đậu xốt ba chỉ", price: 90000 },
 { name: "Đậu xốt tóp mỡ", price: 90000 },
 { name: "Khoai tây chiên", price: 30000 },
+{ name: "Mì xào bò", price: 0 },
+{ name: "Mì xào rau", price: 0 },
 { name: "Rau xào", price: 20000 },
 { name: "Trứng rán nóng", price: 0 },
 { name: "Trứng lá mơ", price: 0 },
@@ -121,6 +123,7 @@ bia: [
 
   ],
   lau: [
+    { name: "Lẩu", price: 0 },
     { name: "Lẩu Riêu Cua Thập Cẩm", price: 600000 },
     { name: "Lẩu Riêu Cua Bắp Bò", price: 400000 },
     { name: "Lẩu Gà", price: 600000 },
