@@ -147,6 +147,7 @@ bia: [
     { name: "Xúc Xích", price: 0 },
     { name: "Chả Cá", price: 0 },
     { name: "Nấm thêm", price: 0 },
+    { name: "Măng Trúc Thêm", price: 0 },
   ],
   co: [
     { name: "Cỗ Món Theo Yêu Cầu", price: 500000 },
