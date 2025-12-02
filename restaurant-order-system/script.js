@@ -51,6 +51,8 @@ bia: [
 { name: "Chim câu xào răm", price: 120000 },
 { name: "Chim câu xúc phồng tôm", price: 130000 },
 { name: "Cá chép hấp", price: 0 },
+{ name: "Trâu Nhúng Mẻ", price: 0 },
+{ name: "Bò Nhúng Mẻ", price: 0 },
 { name: "cá chép xào", price: 0 },
 { name: "Cá chép rán", price: 0 },
 { name: "Trạch chiên", price: 80000 },
