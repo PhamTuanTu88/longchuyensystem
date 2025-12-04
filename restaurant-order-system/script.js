@@ -66,6 +66,7 @@ bia: [
 { name: "Ngan cháy tỏi", price: 80000 },
 { name: "Vịt cháy tỏi", price: 80000 },
 { name: "Lòng dồi sụn", price: 90000 },
+{ name: "Ngựa cháy tỏi", price: 0 },
 { name: "Thỏ nướng", price: 0 },
 { name: "Thỏ xào lăn", price: 0 },
 { name: "Thỏ tái chanh", price: 0 },
