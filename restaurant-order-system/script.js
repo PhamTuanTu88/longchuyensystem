@@ -86,6 +86,7 @@ bia: [
 { name: "Cá chình", price: 0 },
 { name: "Cá lăng", price: 0 },
 { name: "Gà mẹt", price: 0 },
+{ name: "Gà rang", price: 0 },
 { name: "Gà suất", price: 0 },
 { name: "Gà rang muối", price: 0 },
 { name: "Gà luộc", price: 0 },
